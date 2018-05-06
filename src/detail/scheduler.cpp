@@ -15,6 +15,7 @@ uint64_t milliseconds_until(
 {
     using std::chrono::duration_cast;
     auto now = std::chrono::steady_clock::now();
+    if (now >= abs_time) return 0;
     return duration_cast<std::chrono::milliseconds>(abs_time - now).count();
 }
 
@@ -92,12 +93,18 @@ void scheduler::suspend_until(
     if (is_max_time(abs_time)) {
         if (DEBUG_LOG) std::cout << "waiting indefinitely\n";
     } else {
-        uint64_t milliseconds = milliseconds_until(abs_time) + 1;
-        if (DEBUG_LOG) std::cout << "setting timer for " <<
-            milliseconds << " ms\n";
-        timer_set = true;
-        uv_handle_set_data((uv_handle_t*) &timer_, &timer_done);
-        uv_timer_start(&timer_, suspend_timer_callback, milliseconds, 0);
+        uint64_t milliseconds = milliseconds_until(abs_time);
+        if (milliseconds > 0) {
+            milliseconds += 1; // make sure we wait at least long enough
+            if (DEBUG_LOG) std::cout << "setting timer for " <<
+                milliseconds << " ms\n";
+            timer_set = true;
+            uv_handle_set_data((uv_handle_t*) &timer_, &timer_done);
+            uv_timer_start(&timer_, suspend_timer_callback, milliseconds, 0);
+        } else {
+            // No need to set a timer. We're already at abs_time (or past).
+            timer_done = true;
+        }
     }
     while (true) {
         if (DEBUG_LOG) std::cout << "running event loop\n";
