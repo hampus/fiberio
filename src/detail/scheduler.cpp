@@ -8,7 +8,7 @@ namespace detail {
 
 namespace {
 
-bool DEBUG_LOG = false;
+const bool DEBUG_LOG = false;
 
 uint64_t milliseconds_until(
     const std::chrono::steady_clock::time_point& abs_time)

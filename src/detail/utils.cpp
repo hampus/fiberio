@@ -10,7 +10,7 @@ namespace detail {
 
 namespace {
 
-bool DEBUG_LOG = false;
+const bool DEBUG_LOG = false;
 
 void on_handle_closed(uv_handle_t* handle)
 {
