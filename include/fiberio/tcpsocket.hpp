@@ -23,9 +23,7 @@ public:
 
     virtual std::string read() = 0;
 
-    virtual std::string read(bool queue_first) = 0;
-
-    virtual void write(std::string data) = 0;
+    virtual void write(const std::string& data) = 0;
 
     // Non-copyable and non-movable
     tcpsocket(const tcpsocket&) = delete;

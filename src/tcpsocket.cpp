@@ -2,7 +2,6 @@
 #include <fiberio/detail/utils.hpp>
 #include <boost/fiber/all.hpp>
 #include <iostream>
-#include <deque>
 #include <mutex>
 #include <uv.h>
 
@@ -12,7 +11,7 @@ namespace fiberio {
 
 namespace {
 
-bool DEBUG_LOG = false;
+const bool DEBUG_LOG = false;
 
 class socket_impl : public tcpsocket
 {
@@ -24,19 +23,18 @@ public:
     void listen(int backlog);
     std::unique_ptr<tcpsocket> accept();
     std::string read();
-    std::string read(bool queue_first);
-    void write(std::string data);
+    void write(const std::string& data);
 
     void on_connection();
     void do_accept(socket_impl& server);
-    void on_read(std::string data);
+    void on_read(std::string&& data);
 private:
     uv_loop_t* loop_;
     uv_tcp_t tcp_;
     fibers::mutex mutex_;
     fibers::condition_variable cond_;
     int pending_connections_;
-    std::deque<fibers::promise<std::string>> read_reqs_;
+    std::string in_buf_;
 };
 
 void connection_callback(uv_stream_t* server, int status)
@@ -48,6 +46,8 @@ void connection_callback(uv_stream_t* server, int status)
 
 void alloc_callback(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)
 {
+    if (DEBUG_LOG) std::cout << "allocating buffer of " <<
+        suggested_size << " bytes\n";
     buf->base = static_cast<char*>(malloc(suggested_size));
     buf->len = suggested_size;
 }
@@ -56,8 +56,12 @@ void read_callback(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
 {
     void* data = uv_handle_get_data((uv_handle_t*) stream);
     socket_impl* socket = static_cast<socket_impl*>(data);
-    socket->on_read(std::string(buf->base, nread));
+
+    std::string data_string(buf->base, nread);
+    if (DEBUG_LOG) std::cout << "freeing buffer\n";
     free(buf->base);
+
+    socket->on_read(std::move(data_string));
 }
 
 void write_callback(uv_write_t* req, int status)
@@ -114,7 +118,7 @@ void socket_impl::on_connection()
     pending_connections_++;
     if (DEBUG_LOG) std::cout << "increased pending_connections_ to " <<
         pending_connections_ << "\n";
-    cond_.notify_one();
+    cond_.notify_all();
 }
 
 void socket_impl::do_accept(socket_impl& server)
@@ -125,45 +129,41 @@ void socket_impl::do_accept(socket_impl& server)
 
 std::string socket_impl::read()
 {
-    return read(false);
-}
+    std::unique_lock<fibers::mutex> lock(mutex_);
 
-std::string socket_impl::read(bool queue_first)
-{
-    fibers::promise<std::string> promise;
-    fibers::future<std::string> future = promise.get_future();
-    bool is_reading = !read_reqs_.empty();
-
-    if (queue_first) {
-        read_reqs_.push_front(std::move(promise));
-    } else {
-        read_reqs_.push_back(std::move(promise));
-    }
-
-    if (!is_reading) {
-        if (DEBUG_LOG) std::cout << "starting reading\n";
+    if (in_buf_.empty()) {
+        if (DEBUG_LOG) std::cout << "starting read\n";
         uv_read_start((uv_stream_t*) &tcp_, alloc_callback, read_callback);
-    }
 
-    if (DEBUG_LOG) std::cout << "waiting for read request to finish\n";
-    std::string data = future.get();
+        if (DEBUG_LOG) std::cout << "waiting for data to be read\n";
+        while (in_buf_.empty()) {
+            cond_.wait(lock);
+        }
 
-    if (read_reqs_.empty()) {
         if (DEBUG_LOG) std::cout << "stopping reading\n";
         uv_read_stop((uv_stream_t*) &tcp_);
     }
 
+    std::string data;
+    in_buf_.swap(data);
+
+    if (DEBUG_LOG) std::cout << "returning " << data.size() << " read bytes\n";
     return data;
 }
 
-void socket_impl::on_read(std::string data)
+void socket_impl::on_read(std::string&& data)
 {
-    fibers::promise<std::string> promise{ std::move(read_reqs_.front()) };
-    read_reqs_.pop_front();
-    promise.set_value(data);
+    std::unique_lock<fibers::mutex> lock(mutex_);
+    if (DEBUG_LOG) std::cout << "read data\n";
+    if (in_buf_.empty()) {
+        in_buf_.assign(data);
+    } else {
+        in_buf_.append(data);
+    }
+    cond_.notify_all();
 }
 
-void socket_impl::write(std::string data)
+void socket_impl::write(const std::string& data)
 {
     fibers::promise<void> promise;
     uv_write_t req;
