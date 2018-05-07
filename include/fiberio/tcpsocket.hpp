@@ -25,6 +25,8 @@ public:
 
     virtual void write(const std::string& data) = 0;
 
+    virtual void close() = 0;
+
     // Non-copyable and non-movable
     tcpsocket(const tcpsocket&) = delete;
     tcpsocket& operator=(const tcpsocket&) = delete;

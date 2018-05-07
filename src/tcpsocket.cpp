@@ -29,10 +29,12 @@ public:
     std::unique_ptr<tcpsocket> accept();
     std::string read();
     void write(const std::string& data);
+    void close();
 
     void on_connection();
     void do_accept(socket_impl& server);
     void on_read(std::string&& data);
+    void on_read_error();
 private:
     uv_loop_t* loop_;
     uv_tcp_t tcp_;
@@ -40,6 +42,7 @@ private:
     fibers::condition_variable cond_;
     int pending_connections_;
     std::string in_buf_;
+    bool closed_;
 };
 
 void connection_callback(uv_stream_t* server, int status)
@@ -69,17 +72,26 @@ void read_callback(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
     void* data = uv_handle_get_data((uv_handle_t*) stream);
     socket_impl* socket = static_cast<socket_impl*>(data);
 
-    std::string data_string(buf->base, nread);
+    std::string data_string;
+    if (nread > 0) {
+        data_string.assign(buf->base, nread);
+    }
 
     if (buf->base == g_buf.data()) {
         if (DEBUG_LOG) std::cout << "freeing global buffer\n";
         g_buf_used = false;
-    } else {
+    } else if (buf->base != 0){
         if (DEBUG_LOG) std::cout << "freeing buffer\n";
         free(buf->base);
     }
 
-    socket->on_read(std::move(data_string));
+    if (nread >= 0) {
+        socket->on_read(std::move(data_string));
+    } else {
+        if (DEBUG_LOG) std::cout << "read error. stop reading. close async.\n";
+        uv_read_stop(stream);
+        fibers::async(&socket_impl::on_read_error, socket);
+    }
 }
 
 void write_callback(uv_write_t* req, int status)
@@ -94,14 +106,19 @@ socket_impl::socket_impl()
     if (DEBUG_LOG) std::cout << "creating tcp_socket\n";
     loop_ = uv_default_loop();
     pending_connections_ = 0;
+    closed_ = false;
     uv_tcp_init(loop_, &tcp_);
     uv_handle_set_data((uv_handle_t*) &tcp_, this);
 }
 
 socket_impl::~socket_impl()
 {
-    if (DEBUG_LOG) std::cout << "destroying tcp_socket\n";
-    detail::close_handle(&tcp_);
+    if (!closed_) {
+        if (DEBUG_LOG) std::cout << "closing tcp_socket from destructor\n";
+        close();
+    } else {
+        if (DEBUG_LOG) std::cout << "destroying closed tcp_socket\n";
+    }
 }
 
 void socket_impl::bind(const addrinfo_ptr& addr)
@@ -148,13 +165,14 @@ void socket_impl::do_accept(socket_impl& server)
 std::string socket_impl::read()
 {
     std::unique_lock<fibers::mutex> lock(mutex_);
+    if (closed_) return "";
 
     if (in_buf_.empty()) {
         if (DEBUG_LOG) std::cout << "starting read\n";
         uv_read_start((uv_stream_t*) &tcp_, alloc_callback, read_callback);
 
         if (DEBUG_LOG) std::cout << "waiting for data to be read\n";
-        while (in_buf_.empty()) {
+        while (in_buf_.empty() && !closed_) {
             cond_.wait(lock);
         }
     }
@@ -168,7 +186,6 @@ std::string socket_impl::read()
 
 void socket_impl::on_read(std::string&& data)
 {
-    std::unique_lock<fibers::mutex> lock(mutex_);
     if (DEBUG_LOG) std::cout << "read data (" << data.size() << " bytes)\n";
     if (in_buf_.empty()) {
         in_buf_.assign(data);
@@ -181,6 +198,12 @@ void socket_impl::on_read(std::string&& data)
         uv_read_stop((uv_stream_t*) &tcp_);
     }
     cond_.notify_all();
+}
+
+void socket_impl::on_read_error()
+{
+    if (DEBUG_LOG) std::cout << "read error. closing.\n";
+    close();
 }
 
 void socket_impl::write(const std::string& data)
@@ -198,6 +221,16 @@ void socket_impl::write(const std::string& data)
     uv_write(&req, (uv_stream_t*) &tcp_, bufs, 1, write_callback);
 
     promise.get_future().get();
+}
+
+void socket_impl::close()
+{
+    if (!closed_) {
+        if (DEBUG_LOG) std::cout << "closing tcp_socket\n";
+        closed_ = true;
+        detail::close_handle(&tcp_);
+        cond_.notify_all();
+    }
 }
 
 }

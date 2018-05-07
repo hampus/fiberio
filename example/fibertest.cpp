@@ -40,6 +40,8 @@ void handle_client(std::unique_ptr<fiberio::tcpsocket> client)
             client->write("ok. closing.\n");
             return;
         } else {
+            std::cout << "read " << data.size() << " bytes\n";
+            if (data.empty()) break;
             std::cout << "echoing data: " << data;
             client->write(data);
         }
