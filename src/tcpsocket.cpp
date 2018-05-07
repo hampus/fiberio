@@ -149,7 +149,6 @@ std::unique_ptr<tcpsocket> socket_impl::accept()
 
 void socket_impl::on_connection()
 {
-    std::unique_lock<fibers::mutex> lock(mutex_);
     pending_connections_++;
     if (DEBUG_LOG) std::cout << "increased pending_connections_ to " <<
         pending_connections_ << "\n";
