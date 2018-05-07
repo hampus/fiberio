@@ -3,6 +3,7 @@
 #include <boost/fiber/all.hpp>
 #include <iostream>
 #include <mutex>
+#include <vector>
 #include <uv.h>
 
 namespace fibers = boost::fibers;
@@ -12,6 +13,10 @@ namespace fiberio {
 namespace {
 
 const bool DEBUG_LOG = false;
+
+const unsigned int BUF_SIZE = 256*1024;
+std::vector<char> g_buf(BUF_SIZE);
+bool g_buf_used = false;
 
 class socket_impl : public tcpsocket
 {
@@ -46,10 +51,17 @@ void connection_callback(uv_stream_t* server, int status)
 
 void alloc_callback(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)
 {
-    if (DEBUG_LOG) std::cout << "allocating buffer of " <<
-        suggested_size << " bytes\n";
-    buf->base = static_cast<char*>(malloc(suggested_size));
-    buf->len = suggested_size;
+    if (g_buf_used) {
+        if (DEBUG_LOG) std::cout << "allocating buffer of " <<
+            suggested_size << " bytes\n";
+        buf->base = static_cast<char*>(malloc(suggested_size));
+        buf->len = suggested_size;
+    } else {
+        if (DEBUG_LOG) std::cout << "using global buffer\n";
+        buf->base = g_buf.data();
+        buf->len = g_buf.size();
+        g_buf_used = true;
+    }
 }
 
 void read_callback(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
@@ -58,8 +70,14 @@ void read_callback(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
     socket_impl* socket = static_cast<socket_impl*>(data);
 
     std::string data_string(buf->base, nread);
-    if (DEBUG_LOG) std::cout << "freeing buffer\n";
-    free(buf->base);
+
+    if (buf->base == g_buf.data()) {
+        if (DEBUG_LOG) std::cout << "freeing global buffer\n";
+        g_buf_used = false;
+    } else {
+        if (DEBUG_LOG) std::cout << "freeing buffer\n";
+        free(buf->base);
+    }
 
     socket->on_read(std::move(data_string));
 }
@@ -139,9 +157,6 @@ std::string socket_impl::read()
         while (in_buf_.empty()) {
             cond_.wait(lock);
         }
-
-        if (DEBUG_LOG) std::cout << "stopping reading\n";
-        uv_read_stop((uv_stream_t*) &tcp_);
     }
 
     std::string data;
@@ -154,11 +169,16 @@ std::string socket_impl::read()
 void socket_impl::on_read(std::string&& data)
 {
     std::unique_lock<fibers::mutex> lock(mutex_);
-    if (DEBUG_LOG) std::cout << "read data\n";
+    if (DEBUG_LOG) std::cout << "read data (" << data.size() << " bytes)\n";
     if (in_buf_.empty()) {
         in_buf_.assign(data);
     } else {
+        if (DEBUG_LOG) std::cout << "appending data\n";
         in_buf_.append(data);
+    }
+    if (!in_buf_.empty()) {
+        if (DEBUG_LOG) std::cout << "stopping reading\n";
+        uv_read_stop((uv_stream_t*) &tcp_);
     }
     cond_.notify_all();
 }
