@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <string>
-#include <fiberio/addrinfo.hpp>
 
 namespace fiberio {
 
@@ -15,7 +14,7 @@ public:
     tcpsocket() {};
     virtual ~tcpsocket() {};
 
-    virtual void bind(const addrinfo_ptr& addr) = 0;
+    virtual void bind(const std::string& host, int port) = 0;
 
     virtual void listen(int backlog) = 0;
 

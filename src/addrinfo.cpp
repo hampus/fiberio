@@ -1,4 +1,4 @@
-#include <fiberio/addrinfo.hpp>
+#include "addrinfo.hpp"
 #include <boost/fiber/all.hpp>
 #include <iostream>
 
@@ -16,6 +16,11 @@ void addrinfo_callback(uv_getaddrinfo_t* req, int status, struct addrinfo* res)
     promise->set_value(res);
 }
 
+}
+
+addrinfo_ptr getaddrinfo(const std::string& host, int port)
+{
+    return getaddrinfo(host, std::to_string(port));
 }
 
 addrinfo_ptr getaddrinfo(const std::string& node, const std::string& service)

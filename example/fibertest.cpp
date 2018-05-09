@@ -5,15 +5,6 @@
 namespace fibers = boost::fibers;
 namespace this_fiber = boost::this_fiber;
 
-void uv_sleep_callback(uv_timer_t* handle)
-{
-    std::cout << "uv_sleep_callback\n";
-    void* data = uv_handle_get_data((uv_handle_t*) handle);
-    fibers::promise<void>* promise = static_cast<fibers::promise<void>*>(data);
-    promise->set_value();
-    std::cout << "returning from uv_sleep_callback\n";
-}
-
 void handle_client(std::unique_ptr<fiberio::tcpsocket> client)
 {
     std::cout << "handle_client\n";
@@ -42,11 +33,8 @@ int main()
 
     auto socket{ fiberio::tcpsocket::create() };
 
-    auto addr = fiberio::getaddrinfo("127.0.0.1", "5500");
-    std::cout << "got addrinfo\n";
-
     std::cout << "binding socket\n";
-    socket->bind(addr);
+    socket->bind("127.0.0.1", 5500);
 
     std::cout << "listening on socket\n";
     socket->listen(50);

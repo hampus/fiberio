@@ -3,6 +3,5 @@
 
 #include <fiberio/fiberio.hpp>
 #include <fiberio/tcpsocket.hpp>
-#include <fiberio/addrinfo.hpp>
 
 #endif

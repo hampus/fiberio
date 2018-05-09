@@ -1,4 +1,5 @@
 #include <fiberio/tcpsocket.hpp>
+#include "addrinfo.hpp"
 #include "utils.hpp"
 #include <boost/fiber/all.hpp>
 #include <iostream>
@@ -24,7 +25,7 @@ public:
     socket_impl();
     ~socket_impl();
 
-    void bind(const addrinfo_ptr& addr);
+    void bind(const std::string& host, int port);
     void listen(int backlog);
     std::unique_ptr<tcpsocket> accept();
     std::string read();
@@ -35,6 +36,7 @@ public:
     void do_accept(socket_impl& server);
     void on_read(std::string&& data);
     void on_read_error();
+
 private:
     uv_loop_t* loop_;
     uv_tcp_t tcp_;
@@ -121,8 +123,9 @@ socket_impl::~socket_impl()
     }
 }
 
-void socket_impl::bind(const addrinfo_ptr& addr)
+void socket_impl::bind(const std::string& host, int port)
 {
+    auto addr = getaddrinfo(host, port);
     uv_tcp_bind(&tcp_, addr->ai_addr, 0);
 }
 
