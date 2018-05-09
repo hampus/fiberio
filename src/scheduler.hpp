@@ -1,5 +1,5 @@
-#ifndef _FIBERIO_DETAIL_SCHEDULER_H_
-#define _FIBERIO_DETAIL_SCHEDULER_H_
+#ifndef _FIBERIO_SRC_SCHEDULER_H_
+#define _FIBERIO_SRC_SCHEDULER_H_
 
 #include <boost/fiber/all.hpp>
 #include <chrono>
@@ -37,7 +37,7 @@ public:
 private:
     std::deque<boost::fibers::context*> queue_;
     uv_loop_t* loop_;
-    uv_timer_t timer_;
+    uv_timer_t* timer_;
 };
 
 }

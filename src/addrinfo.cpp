@@ -1,4 +1,5 @@
 #include "addrinfo.hpp"
+#include "loop.hpp"
 #include <boost/fiber/all.hpp>
 #include <iostream>
 
@@ -30,7 +31,7 @@ addrinfo_ptr getaddrinfo(const std::string& node, const std::string& service)
     uv_getaddrinfo_t req;
     uv_req_set_data((uv_req_t*) &req, &promise);
 
-    uv_getaddrinfo(uv_default_loop(), &req, addrinfo_callback,
+    uv_getaddrinfo(get_uv_loop(), &req, addrinfo_callback,
         node.c_str(), service.c_str(), 0);
 
     struct addrinfo* res = promise.get_future().get();

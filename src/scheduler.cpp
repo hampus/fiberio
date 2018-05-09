@@ -1,4 +1,5 @@
 #include "scheduler.hpp"
+#include "loop.hpp"
 
 namespace fibers = boost::fibers;
 namespace this_fiber = boost::this_fiber;
@@ -15,7 +16,7 @@ uint64_t milliseconds_until(
     using std::chrono::duration_cast;
     auto now = std::chrono::steady_clock::now();
     if (now >= abs_time) return 0;
-    return duration_cast<std::chrono::milliseconds>(abs_time - now).count();
+    return duration_cast<std::chrono::milliseconds>(abs_time - now).count() + 1;
 }
 
 bool is_max_time(const std::chrono::steady_clock::time_point& abs_time)
@@ -34,22 +35,15 @@ void suspend_timer_callback(uv_timer_t* handle)
 }
 
 scheduler::scheduler()
-    : scheduler(uv_default_loop())
 {
-}
-
-scheduler::scheduler(uv_loop_t* loop)
-{
-    if (DEBUG_LOG) std::cout << "creating scheduler\n";
-    loop_ = loop;
-    uv_timer_init(loop_, &timer_);
+    if (DEBUG_LOG) std::cout << "scheduler: creating scheduler\n";
+    loop_ = get_uv_loop();
+    timer_ = get_scheduler_timer();
 }
 
 scheduler::~scheduler()
 {
-    // Note: we don't close timer_, since it's usually too late at this point.
-    if (DEBUG_LOG) std::cout << "closing the event loop\n";
-    uv_loop_close(loop_);
+    if (DEBUG_LOG) std::cout << "scheduler: destroying scheduler\n";
 }
 
 void scheduler::awakened(fibers::context* fiber) noexcept
@@ -75,10 +69,12 @@ fibers::context* scheduler::pick_next() noexcept
 
 bool scheduler::has_ready_fibers() const noexcept
 {
-    if (queue_.empty()) {
-        std::cout << "scheduler::has_ready_fibers() -> false\n";
-    } else {
-        std::cout << "scheduler::has_ready_fibers() -> true\n";
+    if (DEBUG_LOG) {
+        if (queue_.empty()) {
+            std::cout << "scheduler::has_ready_fibers() -> false\n";
+        } else {
+            std::cout << "scheduler::has_ready_fibers() -> true\n";
+        }
     }
     return !queue_.empty();
 }
@@ -94,14 +90,15 @@ void scheduler::suspend_until(
     } else {
         uint64_t milliseconds = milliseconds_until(abs_time);
         if (milliseconds > 0) {
-            milliseconds += 1; // make sure we wait at least long enough
             if (DEBUG_LOG) std::cout << "setting timer for " <<
                 milliseconds << " ms\n";
             timer_set = true;
-            uv_handle_set_data((uv_handle_t*) &timer_, &timer_done);
-            uv_timer_start(&timer_, suspend_timer_callback, milliseconds, 0);
+            uv_handle_set_data((uv_handle_t*) timer_, &timer_done);
+            uv_timer_start(timer_, suspend_timer_callback, milliseconds, 0);
         } else {
             // No need to set a timer. We're already at abs_time (or past).
+            if (DEBUG_LOG) std::cout << "not setting a timer (" <<
+                milliseconds << " ms)\n";
             timer_done = true;
         }
     }
@@ -127,7 +124,7 @@ void scheduler::suspend_until(
         if (ready_fibers || timer_done) {
             if (timer_set && !timer_done) {
                 if (DEBUG_LOG) std::cout << "stopping timer\n";
-                uv_timer_stop(&timer_);
+                uv_timer_stop(timer_);
             }
             if (DEBUG_LOG) std::cout << "exiting from suspend_until()\n";
             break;

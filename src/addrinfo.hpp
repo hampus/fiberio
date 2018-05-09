@@ -1,5 +1,5 @@
-#ifndef _FIBERIO_ADDRINFO_H_
-#define _FIBERIO_ADDRINFO_H_
+#ifndef _FIBERIO_SRC_ADDRINFO_H_
+#define _FIBERIO_SRC_ADDRINFO_H_
 
 #include <uv.h>
 #include <memory>

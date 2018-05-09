@@ -5,7 +5,7 @@ boost_dep = dependency('boost', modules : ['context', 'fiber'])
 libuv_dep = dependency('libuv')
 
 fiberio_inc = include_directories('include')
-fiberio_deps = [thread_dep, boost_dep, libuv_dep]
 
 subdir('src')
+subdir('tests')
 subdir('example')

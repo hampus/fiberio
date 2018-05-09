@@ -1,5 +1,6 @@
 #include <fiberio/tcpsocket.hpp>
 #include "addrinfo.hpp"
+#include "loop.hpp"
 #include "utils.hpp"
 #include <boost/fiber/all.hpp>
 #include <iostream>
@@ -106,7 +107,7 @@ void write_callback(uv_write_t* req, int status)
 socket_impl::socket_impl()
 {
     if (DEBUG_LOG) std::cout << "creating tcp_socket\n";
-    loop_ = uv_default_loop();
+    loop_ = get_uv_loop();
     pending_connections_ = 0;
     closed_ = false;
     uv_tcp_init(loop_, &tcp_);
