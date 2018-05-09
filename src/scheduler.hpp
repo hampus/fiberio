@@ -7,7 +7,6 @@
 #include <uv.h>
 
 namespace fiberio {
-namespace detail {
 
 class scheduler : public boost::fibers::algo::algorithm
 {
@@ -41,7 +40,6 @@ private:
     uv_timer_t timer_;
 };
 
-}
 }
 
 #endif

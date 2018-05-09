@@ -4,7 +4,6 @@
 #include <uv.h>
 
 namespace fiberio {
-namespace detail {
 
 void close_handle(uv_handle_t* handle);
 
@@ -16,7 +15,6 @@ inline void close_handle(uv_timer_t* handle) {
     close_handle(reinterpret_cast<uv_handle_t*>(handle));
 }
 
-}
 }
 
 #endif

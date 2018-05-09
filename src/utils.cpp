@@ -1,4 +1,4 @@
-#include <fiberio/detail/utils.hpp>
+#include "utils.hpp"
 #include <boost/fiber/all.hpp>
 #include <iostream>
 
@@ -6,7 +6,6 @@ namespace fibers = boost::fibers;
 namespace this_fiber = boost::this_fiber;
 
 namespace fiberio {
-namespace detail {
 
 namespace {
 
@@ -33,5 +32,4 @@ void close_handle(uv_handle_t* handle)
     promise.get_future().get();
 }
 
-}
 }

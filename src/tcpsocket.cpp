@@ -1,5 +1,5 @@
 #include <fiberio/tcpsocket.hpp>
-#include <fiberio/detail/utils.hpp>
+#include "utils.hpp"
 #include <boost/fiber/all.hpp>
 #include <iostream>
 #include <mutex>
@@ -227,7 +227,7 @@ void socket_impl::close()
     if (!closed_) {
         if (DEBUG_LOG) std::cout << "closing tcp_socket\n";
         closed_ = true;
-        detail::close_handle(&tcp_);
+        close_handle(&tcp_);
         cond_.notify_all();
     }
 }
