@@ -8,4 +8,4 @@ fiberio_inc = include_directories('include')
 
 subdir('src')
 subdir('tests')
-subdir('example')
+subdir('examples')

@@ -2,6 +2,7 @@
 gtest_dep = dependency('gtest', main : true, required : false)
 
 if not gtest_dep.found()
+  message('Not building tests')
   subdir_done()
 endif
 
