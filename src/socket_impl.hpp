@@ -33,6 +33,8 @@ public:
 private:
     void wait_for_read_to_finish();
 
+    void shutdown();
+
     uv_loop_t* loop_;
     uv_tcp_t tcp_;
     boost::fibers::condition_variable_any cond_;

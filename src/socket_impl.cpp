@@ -70,6 +70,18 @@ void read_callback(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
     }
 }
 
+void shutdown_callback(uv_shutdown_t* req, int status)
+{
+    void* data = uv_req_get_data((uv_req_t*) req);
+    fibers::promise<void>* promise = static_cast<fibers::promise<void>*>(data);
+    try {
+        check_uv_status(status);
+        promise->set_value();
+    } catch (std::exception& e) {
+        promise->set_exception(std::current_exception());
+    }
+}
+
 }
 
 socket_impl::socket_impl()
@@ -176,11 +188,25 @@ void socket_impl::write(const char* data, std::size_t len)
 void socket_impl::close()
 {
     if (!closed_) {
-        if (DEBUG_LOG) std::cout << "closing socket_impl\n";
         closed_ = true;
+        if (DEBUG_LOG) std::cout << "closing socket_impl\n";
+        try {
+            shutdown();
+        } catch (std::exception& e) {
+            if (DEBUG_LOG) std::cout << "failed to shut down socket\n";
+        }
         close_handle(&tcp_);
         cond_.notify_all();
     }
+}
+
+void socket_impl::shutdown()
+{
+    fibers::promise<void> promise;
+    uv_shutdown_t req;
+    uv_req_set_data((uv_req_t*) &req, &promise);
+    uv_shutdown(&req, (uv_stream_t*) &tcp_, shutdown_callback);
+    promise.get_future().get();
 }
 
 }
