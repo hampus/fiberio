@@ -19,7 +19,7 @@ class time_measure(object):
         print('per iteration: {} ns'.format(int(round(ns / iterations))))
         print('iterations per second: {}'.format(int(round(iter_per_sec))))
 
-ITERATIONS = 200
+ITERATIONS = 500
 CLIENTS = 100
 
 async def handle_client(client_reader, client_writer):
@@ -27,6 +27,13 @@ async def handle_client(client_reader, client_writer):
         buf = await client_reader.readexactly(1)
         client_writer.write(buf)
         await client_writer.drain()
+
+async def run_client(reader, writer):
+    data = b'a'
+    for i in range(ITERATIONS):
+        writer.write(data)
+        await writer.drain()
+        await reader.readexactly(1)
 
 async def main(loop):
     server = await asyncio.start_server(handle_client, '127.0.0.1', 5530)
@@ -37,14 +44,13 @@ async def main(loop):
         reader, writer = await asyncio.open_connection('127.0.0.1', 5530)
         readers.append(reader)
         writers.append(writer)
-    data = b'a'
+
     measure = time_measure()
-    for i in range(ITERATIONS):
-        for c in range(CLIENTS):
-            writers[c].write(data)
-            await writers[c].drain()
-        for c in range(CLIENTS):
-            await readers[c].readexactly(1)
+    clients = []
+    for c in range(CLIENTS):
+        clients.append(loop.create_task(run_client(readers[c], writers[c])))
+    for c in clients:
+        await c
     measure.finish(ITERATIONS * CLIENTS)
 
     server.close()
