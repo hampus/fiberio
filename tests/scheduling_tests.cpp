@@ -61,3 +61,14 @@ TEST(scheduling, block_on_promises) {
     promise1.set_value(33);
     ASSERT_EQ(33, promise2.get_future().get());
 }
+
+TEST(scheduling, async_lambda) {
+    fiberio::use_on_this_thread();
+
+    int a = 0;
+    fibers::async([&a](int b) {
+        a = b;
+    }, 55).wait();
+
+    ASSERT_EQ(55, a);
+}

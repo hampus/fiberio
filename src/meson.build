@@ -3,6 +3,10 @@ fiberio_deps = [thread_dep, boost_dep, libuv_dep]
 
 fiberio_srcs = [
   'fiberio.cpp',
+  'server_socket.cpp',
+  'server_socket_impl.cpp',
+  'socket.cpp',
+  'socket_impl.cpp',
   'tcpsocket.cpp',
   'addrinfo.cpp',
   'scheduler.cpp',

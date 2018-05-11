@@ -1,50 +1,57 @@
 #include <fiberio/all.hpp>
 #include <boost/fiber/all.hpp>
 #include <iostream>
+#include <cstdint>
 
 namespace fibers = boost::fibers;
 namespace this_fiber = boost::this_fiber;
-
-void handle_client(std::unique_ptr<fiberio::tcpsocket> client)
-{
-    std::cout << "handle_client\n";
-    while(true) {
-        std::string data = client->read();
-        if (data == "close\r\n") {
-            std::cout << "closing connection\n";
-            client->write("ok. closing.\n");
-            return;
-        } else {
-            std::cout << "read " << data.size() << " bytes\n";
-            if (data.empty()) break;
-            std::cout << "echoing data: " << data;
-            client->write(data);
-        }
-    }
-}
 
 int main()
 {
     fiberio::use_on_this_thread();
 
-    std::cout << "sleep_for(100)\n";
-    this_fiber::sleep_for(std::chrono::milliseconds(100));
-    std::cout << "returned to main\n";
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 5500);
+    server.listen(50);
 
-    auto socket{ fiberio::tcpsocket::create() };
+    const uint64_t iterations = 100000;
 
-    std::cout << "binding socket\n";
-    socket->bind("127.0.0.1", 5500);
+    auto server_future = fibers::async([&server]() {
+        auto server_client = server.accept();
 
-    std::cout << "listening on socket\n";
-    socket->listen(50);
+        auto start = std::chrono::high_resolution_clock::now();
+        char buf[10];
+        for (uint64_t i = 0; i < iterations; i++) {
+            server_client.read(buf, sizeof(buf));
+        }
+        auto end = std::chrono::high_resolution_clock::now();
 
-    while(true) {
-        std::cout << "waiting for client...\n";
-        auto client = socket->accept();
-        std::cout << "accepted client!\n";
-        fibers::async(handle_client, std::move(client));
+        auto duration = end - start;
+        auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>
+            (duration).count();
+        double microsecs_per_iter =
+            static_cast<double>(ns) / iterations / 1000.0;
+        double seconds_per_iter =
+            static_cast<double>(ns) / iterations / 1000000000.0;
+        double iters_per_sec = 1.0 / seconds_per_iter;
+        std::cout << "nanoseconds: " << ns << "\n";
+        std::cout << "per iteration: " << microsecs_per_iter <<
+            " microseconds\n";
+        std::cout << "iterations per second: " << iters_per_sec << "\n";
+    });
+
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+
+    char buf[] {"a"};
+    for (uint64_t i = 0; i < iterations; i++) {
+        client.write(buf, sizeof(buf));
     }
+
+    server_future.get();
+
+    client.close();
+    server.close();
 
     std::cout << "exiting main()\n";
     return 0;

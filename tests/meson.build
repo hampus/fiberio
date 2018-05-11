@@ -7,9 +7,9 @@ endif
 
 test_deps = [fiberio_dep, gtest_dep]
 
-server_socket = executable('server_socket', 'server_socket_tests.cpp',
+sockets = executable('sockets', 'socket_tests.cpp',
   dependencies : test_deps)
-test('server_socket', server_socket)
+test('sockets', sockets)
 
 scheduling = executable('scheduling', 'scheduling_tests.cpp',
   dependencies : test_deps)

@@ -1,4 +1,4 @@
-project('fiberio', 'cpp', default_options : ['cpp_std=c++14'])
+project('fiberio', 'cpp', default_options : ['cpp_std=c++17'])
 
 thread_dep = dependency('threads')
 boost_dep = dependency('boost', modules : ['context', 'fiber'])
