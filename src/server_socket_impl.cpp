@@ -121,9 +121,9 @@ void server_socket_impl::on_connection(int status) {
 }
 
 socket server_socket_impl::accept() {
-    std::unique_lock<fibers::mutex> lock(mutex_);
     // Wait until there is at least one connection to accept
     if (DEBUG_LOG) std::cout << "waiting for connection to accept\n";
+    dummy_lock lock;
     while (pending_connections_ == 0 && !closed_) {
         cond_.wait(lock);
     }

@@ -22,6 +22,13 @@ inline void check_uv_status(int status) {
     }
 }
 
+class dummy_lock
+{
+public:
+    void lock() {}
+    void unlock() {}
+};
+
 }
 
 #endif

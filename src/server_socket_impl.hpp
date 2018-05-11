@@ -42,8 +42,7 @@ public:
 private:
     uv_loop_t* loop_;
     uv_tcp_t tcp_;
-    boost::fibers::mutex mutex_;
-    boost::fibers::condition_variable cond_;
+    boost::fibers::condition_variable_any cond_;
     int pending_connections_;
     bool closed_;
     std::string host_;

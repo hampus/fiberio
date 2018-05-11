@@ -141,7 +141,7 @@ std::size_t socket_impl::read(char* buf, std::size_t size)
 void socket_impl::wait_for_read_to_finish()
 {
     if (DEBUG_LOG) std::cout << "waiting for read to finish\n";
-    std::unique_lock<fibers::mutex> lock(mutex_);
+    dummy_lock lock;
     while (buf_ != 0 && !closed_) {
         cond_.wait(lock);
     }

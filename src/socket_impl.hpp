@@ -35,8 +35,7 @@ private:
 
     uv_loop_t* loop_;
     uv_tcp_t tcp_;
-    boost::fibers::mutex mutex_;
-    boost::fibers::condition_variable cond_;
+    boost::fibers::condition_variable_any cond_;
     bool closed_ : 1;
     bool reading_ : 1;
     char* buf_;
