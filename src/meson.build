@@ -7,7 +7,6 @@ fiberio_srcs = [
   'server_socket_impl.cpp',
   'socket.cpp',
   'socket_impl.cpp',
-  'tcpsocket.cpp',
   'addrinfo.cpp',
   'scheduler.cpp',
   'loop.cpp',
