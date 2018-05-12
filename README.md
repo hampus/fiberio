@@ -49,7 +49,6 @@ A simple echo server can be created like this:
 #include <boost/fiber/all.hpp>
 
 namespace fibers = boost::fibers;
-namespace this_fiber = boost::this_fiber;
 
 int main()
 {

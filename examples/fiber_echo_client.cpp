@@ -8,7 +8,6 @@
 #include <vector>
 
 namespace fibers = boost::fibers;
-namespace this_fiber = boost::this_fiber;
 
 int main()
 {
