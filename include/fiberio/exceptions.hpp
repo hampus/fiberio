@@ -5,6 +5,7 @@
 
 namespace fiberio {
 
+//! This is thrown when something fails because the connection was closed
 class socket_closed_error : public std::runtime_error
 {
 public:
