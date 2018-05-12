@@ -15,8 +15,8 @@ int main()
 
     const auto host{ "127.0.0.1" };
     const auto port{ 5531 };
-    const auto num_iterations{ 500 };
-    const auto num_clients{ 100 };
+    const auto num_iterations{ 50 };
+    const auto num_clients{ 1000 };
 
     std::vector<fiberio::socket> clients(num_clients);
     for (auto& client : clients) {

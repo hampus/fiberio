@@ -123,7 +123,7 @@ void bench_echo_one_byte_ideal_unix_socket_pair()
 void bench_echo_one_byte_raw_threaded_unix_socket_pair()
 {
     const uint64_t num_iterations{ 50 };
-    const int num_clients{ 5000 };
+    const int num_clients{ 1000 };
 
     std::vector<int> server_fds;
     std::vector<int> client_fds;
