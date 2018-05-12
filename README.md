@@ -8,6 +8,9 @@ See [NOTICE](NOTICE) and [LICENSE](LICENSE) for license terms.
 This is highly experimental at this point. Currently uses libuv internally for
 asynchronous networking.
 
+Doxygen documentation is available
+[here](https://hampus.github.io/fiberio/html/).
+
 
 Requirements
 ------------
