@@ -69,7 +69,6 @@ int main()
         }, std::move(client));
     }
 
-    server.close();
     return 0;
 }
 ```

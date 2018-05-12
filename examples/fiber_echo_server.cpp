@@ -2,7 +2,6 @@
 #include <boost/fiber/all.hpp>
 
 namespace fibers = boost::fibers;
-namespace this_fiber = boost::this_fiber;
 
 int main()
 {
@@ -23,6 +22,5 @@ int main()
         }, std::move(client));
     }
 
-    server.close();
     return 0;
 }
