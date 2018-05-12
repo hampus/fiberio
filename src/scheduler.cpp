@@ -134,8 +134,8 @@ void scheduler::suspend_until(
 
 void scheduler::notify() noexcept
 {
-    std::cout << "scheduler::notify() (NOT IMPLEMENTED)\n";
-    // TODO: not yet supported
+    if (DEBUG_LOG) std::cout << "scheduler::notify() (NOT IMPLEMENTED)\n";
+    // TODO: support this in the future (not needed without multi-threading)
 }
 
 }
