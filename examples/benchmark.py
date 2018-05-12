@@ -19,8 +19,8 @@ class time_measure(object):
         print('per iteration: {} ns'.format(int(round(ns / iterations))))
         print('iterations per second: {}'.format(int(round(iter_per_sec))))
 
-ITERATIONS = 500
-CLIENTS = 100
+ITERATIONS = 50
+CLIENTS = 1000
 
 async def handle_client(client_reader, client_writer):
     for i in range(ITERATIONS):
