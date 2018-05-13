@@ -1,5 +1,5 @@
 #ifndef _FIBERIO_SRC_SERVER_SOCKET_IMPL_H_
-#define _FIBERIO_SERVER_SOCKET_H_
+#define _FIBERIO_SRC_SERVER_SOCKET_IMPL_H_
 
 #include <fiberio/socket.hpp>
 #include <boost/fiber/all.hpp>
