@@ -17,4 +17,4 @@ before_install:
   - docker build -t fiberio-$DOCKERENV -f ci/$DOCKERENV/Dockerfile .
 
 script:
-  - docker run --rm -e CXX=$CXX fiberio-$DOCKERENV
+  - docker run --rm -e CXX fiberio-$DOCKERENV
