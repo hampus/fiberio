@@ -6,12 +6,15 @@ services:
   - docker
 
 env:
-  - DOCKERENV=ubuntu18.04 CXX=g++
-  - DOCKERENV=ubuntu18.04 CXX=clang++
+  - DOCKERENV=ubuntu18.04
+  - DOCKERENV=archlinux
+
+compiler:
+  - clang
+  - gcc
 
 before_install:
   - docker build -t fiberio-$DOCKERENV -f ci/$DOCKERENV/Dockerfile .
-  - docker ps -a
 
 script:
   - docker run --rm -e CXX=$CXX fiberio-$DOCKERENV
