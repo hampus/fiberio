@@ -7,8 +7,7 @@ ENV CXX g++
 #
 
 RUN pacman --noconfirm -Syu
-RUN pacman --noconfirm -S  wget automake libtool m4 autoconf make pkg-config \
-    meson boost libuv gtest clang
+RUN pacman --noconfirm -S  pkg-config meson boost libuv gtest clang
 
 #
 # Add source code

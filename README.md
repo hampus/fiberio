@@ -32,8 +32,7 @@ to build and install it manually from source.
 
 On Arch Linux, you can install everything using pacman:
 
-    $ sudo pacman -S  wget automake libtool m4 autoconf make pkg-config meson \
-        boost libuv gtest clang
+    $ sudo pacman -S  pkg-config meson boost libuv gtest clang
 
 Building
 --------
