@@ -1,7 +1,7 @@
 FiberIO - fiber-based C++ network library
 =========================================
 
-This is an experimental C++ network library built on top of Boost.Fiber.
+This is an experimental C++ network library built on top of [Boost.Fiber](https://www.boost.org/doc/libs/release/libs/fiber/doc/html/index.html).
 
 See [NOTICE](NOTICE) and [LICENSE](LICENSE) for license terms.
 
@@ -20,11 +20,18 @@ depends on [Boost.Fiber](https://www.boost.org/doc/libs/release/libs/fiber/doc/h
 [libuv](http://libuv.org/) and (optionally)
 [Google Test](https://github.com/google/googletest). It also requires C++17.
 
-Running Ubuntu 18.04 is sufficient and then you can install dependencies with:
+On Ubuntu 18.04, you can install dependencies with:
 
-    $ sudo apt install build-essential meson libboost-fiber-dev libuv-dev \
-            libgtest-dev
+    $ sudo apt install wget build-essential automake libtool pkg-config meson \
+        libboost-fiber-dev libgtest-dev clang
 
+You also need libuv, but the version in Ubuntu 18.04 is too old so you'll need
+to build and install it manually from source.
+
+On Arch Linux, you can install everything using pacman:
+
+    $ sudo pacman -S  wget automake libtool m4 autoconf make pkg-config meson \
+        boost libuv gtest clang
 
 Building
 --------
@@ -37,6 +44,19 @@ Use Meson:
 
 This builds the library and some example applications under build/examples/. It
 will also run all the unit tests.
+
+
+Building with Docker
+--------------------
+
+For testing purposes, there are some Docker files and scripts for building
+inside Docker containers.
+
+You can build with all of those by running (from this directory):
+
+    $ ./ci/buildall.sh
+
+This builds both in Ubuntu 18.04 and Arch Linux and using GCC and Clang.
 
 
 Example
