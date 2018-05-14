@@ -46,6 +46,25 @@ Use Meson:
 This builds the library and some example applications under build/examples/. It
 will also run all the unit tests.
 
+Valgrind
+--------
+
+If you built your Boost library with
+[valgrind=on](https://www.boost.org/doc/libs/release/libs/context/doc/html/context/stack/valgrind.html)
+set, you can enable the valgrind build option for fiberio to avoid valgrind
+warnings.
+
+Either add it when creating the build directory:
+
+    $ meson -Dvalgrind=true build
+
+or change the Meson configuration later:
+
+    $ cd build
+    $ meson configure -Dvalgrind=true
+
+Older versions of Meson works differently (read the manual).
+
 
 Building with Docker
 --------------------

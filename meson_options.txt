@@ -1,0 +1,2 @@
+option('valgrind', type : 'boolean', value : false,
+  description : 'Build with support for Valgrind')
