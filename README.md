@@ -25,14 +25,14 @@ depends on [Boost.Fiber](https://www.boost.org/doc/libs/release/libs/fiber/doc/h
 On Ubuntu 18.04, you can install dependencies with:
 
     $ sudo apt install wget build-essential automake libtool pkg-config meson \
-        libboost-fiber-dev libgtest-dev clang
+        libboost-fiber-dev libgtest-dev
 
 You also need libuv, but the version in Ubuntu 18.04 is too old so you'll need
 to build and install it manually from source.
 
 On Arch Linux, you can install everything using pacman:
 
-    $ sudo pacman -S  pkg-config meson boost libuv gtest clang
+    $ sudo pacman -S  pkg-config meson boost libuv gtest
 
 Building
 --------
