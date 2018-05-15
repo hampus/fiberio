@@ -13,8 +13,6 @@ class scheduler : public boost::fibers::algo::algorithm
 public:
     scheduler();
 
-    scheduler(uv_loop_t* loop);
-
     ~scheduler();
 
     void awakened(boost::fibers::context* fiber) noexcept;
