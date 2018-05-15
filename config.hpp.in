@@ -1,0 +1,7 @@
+#ifndef _CONFIG_HPP_
+#define _CONFIG_HPP_
+
+#mesondefine USE_EPOLL
+#mesondefine USE_LIBUV
+
+#endif

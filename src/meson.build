@@ -1,17 +1,20 @@
 
-fiberio_deps = [thread_dep, boost_dep, libuv_dep]
-
 fiberio_srcs = [
   'fiberio.cpp',
   'server_socket.cpp',
-  'server_socket_impl.cpp',
   'socket.cpp',
-  'socket_impl.cpp',
-  'addrinfo.cpp',
-  'scheduler.cpp',
-  'loop.cpp',
-  'utils.cpp'
 ]
+
+if use_libuv
+  fiberio_srcs += [
+    'uv/server_socket_impl.cpp',
+    'uv/socket_impl.cpp',
+    'uv/addrinfo.cpp',
+    'uv/scheduler.cpp',
+    'uv/loop.cpp',
+    'uv/utils.cpp'
+  ]
+endif
 
 libfiberio = library('fiberio', fiberio_srcs,
   include_directories : fiberio_inc,

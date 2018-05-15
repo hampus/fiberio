@@ -1,5 +1,5 @@
-#ifndef _FIBERIO_SRC_SOCKET_IMPL_H_
-#define _FIBERIO_SRC_SOCKET_IMPL_H_
+#ifndef _FIBERIO_SRC_UV_SOCKET_IMPL_H_
+#define _FIBERIO_SRC_UV_SOCKET_IMPL_H_
 
 #include <boost/fiber/all.hpp>
 #include<string>
