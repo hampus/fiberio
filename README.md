@@ -61,7 +61,7 @@ In theory, it's possible to run FiberIO on multiple threads and having fibers
 scheduled completely independently on each thread. That works perfectly fine,
 but it's not the intended use case. Communication between fibers on different
 threads work the same as communicating with other threads generally (see above).
-Fibers will never be migrated between threads, as part of the design of FiberIO.
+Fibers will never be migrated between threads.
 
 
 Documentation
