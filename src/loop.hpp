@@ -1,5 +1,5 @@
-#ifndef _FIBERIO_SRC_UV_LOOP_H_
-#define _FIBERIO_SRC_UV_LOOP_H_
+#ifndef _FIBERIO_SRC_LOOP_H_
+#define _FIBERIO_SRC_LOOP_H_
 
 #include <uv.h>
 

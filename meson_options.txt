@@ -1,5 +1,2 @@
 option('valgrind', type : 'boolean', value : false,
   description : 'Build with support for Valgrind')
-
-option('iobackend', type : 'string', value : 'auto',
-  description : 'Set to auto, epoll or libuv')

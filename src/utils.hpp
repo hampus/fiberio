@@ -1,5 +1,5 @@
-#ifndef _FIBERIO_SRC_UV_UTILS_H_
-#define _FIBERIO_SRC_UV_UTILS_H_
+#ifndef _FIBERIO_SRC_UTILS_H_
+#define _FIBERIO_SRC_UTILS_H_
 
 #include <stdexcept>
 #include <uv.h>
