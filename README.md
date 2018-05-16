@@ -58,8 +58,8 @@ for the results can be a good way to make use of multiple CPU cores for tasks
 that need it, while still being able to use FiberIO for the rest.
 
 In theory, it's possible to run FiberIO on multiple threads and having fibers
-scheduled completely separately on each thread. That works perfectly fine, but
-it's not the intended use case. Communication between fibers on different
+scheduled completely independently on each thread. That works perfectly fine,
+but it's not the intended use case. Communication between fibers on different
 threads work the same as communicating with other threads generally (see above).
 Fibers will never be migrated between threads, as part of the design of FiberIO.
 
