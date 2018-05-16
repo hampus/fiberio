@@ -7,12 +7,12 @@ This is an experimental C++ network library built on top of
 [Boost.Fiber](https://www.boost.org/doc/libs/release/libs/fiber/doc/html/index.html)
 and [libuv](http://libuv.org/).
 
-The library uses libuv internally to run multiple fibers on a single OS thread,
-with asynchronous I/O under the hood and cooperative scheduling between the
-fibers. Fibers are lightweight threads with their own stacks. All I/O done
-through the library potentially blocks the current fiber and yields to the event
-loop. Fibers never yield control unless they make a blocking I/O call or
-explicitly yield control through  Boost.Fiber. This can make synchronization
+The library uses libuv internally to run multiple Boost.Fiber fibers on a single
+OS thread with asynchronous I/O under the hood and cooperative scheduling
+between the fibers. Fibers are lightweight threads with their own stacks. All
+I/O done through the library potentially blocks the current fiber and yields to
+the event loop. Fibers never yield control unless they make a blocking I/O call
+or explicitly yield control through  Boost.Fiber. This can make synchronization
 between fibers easier compared to multi-threaded programming, where multiple
 threads run at the same time and are scheduled preemptively.
 
