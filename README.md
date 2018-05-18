@@ -19,49 +19,37 @@ threads run at the same time and are scheduled preemptively.
 See [NOTICE](NOTICE) and [LICENSE](LICENSE) for license terms.
 
 
-Details
+Description
 -------
 
-FiberIO only supports running the fibers on a single core (i.e. on one OS
-thread). This means that inter-fiber synchronization is not necessary in some
-cases, unless I/O is involved. A function that does no I/O and doesn't call any
-other functions that might yield will always run to completion without any fiber
-switches and can make use of that fact. In many ways this is similar to
-programming with async / await in Javascript or Python, promises and futures,
+FiberIO is a Boost.Fiber scheduler that supports running fibers on a single
+thread and provides API:s for doing blocking I/O that integrates with the fiber
+scheduler and is handled using libuv under the hood. This means that inter-fiber
+synchronization is not necessary in many cases due to cooperative scheduling and
+the lack of multi-threading. A function that does no I/O and doesn't call any
+other functions that might yield control will always run to completion without
+any fiber switches and can make use of that fact. In many ways this is similar
+to programming with async / await in Javascript or Python, promises and futures,
 NodeJS, or even explicit event-based programming using libuv, libevent, epoll,
 kqueue, or IOCP on a single thread. It's just easier and more natural.
 
-From another point-of-view, it also looks like writing traditional threaded
-source code with blocking I/O calls. It's also possible to call libraries that
-are unaware of fibers. The main potential problem is that if something blocks
-the thread that the fiber runs on, no other fiber will be able to run. Blocking
-calls should only be made through this library (or Boost.Fiber) so that they
-block only the fiber and yield control to the event loop behind the scenes. This
-is a familiar limitation to anyone who has done event-based single-threaded
-programming using other systems.
+At the same time, it also looks a lot like writing traditional threaded source
+code with blocking I/O calls. It's also possible to freely call libraries that
+are unaware of fibers and threads and even make blocking FiberIO calls in
+callbacks from any such libraries. The main potential problem is that if
+something blocks the thread that the fibers run on, no other fiber will be able
+to run. Blocking calls should only be made through this library (or Boost.Fiber)
+so that they block only the fiber and yield control to the event loop behind the
+scenes. This is the same limitation that explicit asynchronous I/O on a single
+thread also has.
 
-The programming model offered by FiberIO can be convenient where running on a
-single CPU core is sufficient and when it's either feasible to avoid doing
-anything that would block the whole thread or it's fine to accept the
-performance penalty of doing so. When it's necessary to make use of multiple CPU
-cores or when it's useful to do anything that might block the whole thread
-(memory mapped I/O or e.g. using libraries that are unaware of fibers and might
-do something thread-blocking), it's generally recommended to make use of 1:1 OS
-threads (possibly with some degree of user space scheduling). That is
-out-of-scope for this library.
+When multiple CPU cores are needed or you want to use e.g. memory mapped file
+access, using ordinary threads is generally a better idea.
 
-It's not yet possible to communicate between fibers and other threads, but that
-will be possible in the future. The fibers running on a thread will always be
-bound to a single thread, however, as part of the design of FiberIO. Manually
-offloading some specific tasks to external thread pools and having fibers wait
-for the results can be a good way to make use of multiple CPU cores for tasks
-that need it, while still being able to use FiberIO for the rest.
-
-In theory, it's possible to run FiberIO on multiple threads and having fibers
-scheduled completely independently on each thread. That works perfectly fine,
-but it's not the intended use case. Communication between fibers on different
-threads work the same as communicating with other threads generally (see above).
-Fibers will never be migrated between threads.
+See
+[Boost.Fiber's](https://www.boost.org/doc/libs/release/libs/fiber/doc/html/index.html)
+documentation for details. It's not yet possible to communicate between fibers
+and other threads, but that will be supported in the future.
 
 
 Documentation
@@ -69,6 +57,48 @@ Documentation
 
 Doxygen documentation is available
 [here](https://hampus.github.io/fiberio/html/).
+
+
+Threads vs Fibers vs Async
+--------------------------
+
+This compares fibers of the FiberIO kind to threads and classic asynchronous
+programming.
+
+These are some advantages of fibers:
+* More natural way to program than using promises/futures, async/await or
+  callbacks. Full support for exceptions and ordinary function calls.
+* Avoids the OS thread scheduler when switching between fibers and can
+  potentially use a simple scheduler for fast context switches.
+* Possible to run cooperatively on a single thread with blocking I/O (that
+  yields control) and minimal thread synchronization.
+* Less risk for mysterious thread synchronization bugs when run on one thread.
+* Cooperatively scheduled. Predictable (in a way) and can reduce overhead.
+* Using a stack for memory allocations is very fast (same for threads).
+
+Fibers also have these disadvantages:
+* Can't use existing libraries or API:s that use blocking I/O or similar (unless
+  they explicitly use this library for all their blocking calls).
+* There's no easy way to tell if a function call is "safe" or might block the
+  whole thread rather than just the fiber itself.
+* Page faults block the whole thread and won't suspend only the fiber itself
+  (makes memory-mapped I/O impossible).
+* Running fibers on multiple threads basically requires the same kind of
+  scheduling and inter-fiber synchronization as threads.
+* The OS can't suspend or wake up individual fibers directly in any way.
+* Cooperatively scheduled. Preemptive scheduling can be useful.
+* Needs to allocate a stack for each fiber, in contrast to event-based systems.
+
+In many ways, fibers are a mix between classic threads and classic asynchronous
+programming, where fibers look almost like threads but still aren't.
+
+A typical scenario where fibers shine is when they are run on a single thread
+and I/O is the main bottleneck. Event-based I/O is often used in these
+situations, like e.g. NodeJS, libuv, libevent, Python's asyncio, Redis, nginx,
+libwayland, Folly, Finagle, Boost.Asio with callbacks and so on. Fibers behave
+the same way as these systems and offer an easier programming model. Note that
+some of these systems can make use of more than one thread, but they are still
+fundamentally event-based and not thread-based.
 
 
 Requirements
