@@ -192,9 +192,9 @@ TEST(server_socket, destroy_new_server_socket) {
     fiberio::server_socket server;
 }
 
-TEST(server_socket, address_family_not_supported) {
+TEST(server_socket, address_family_not_supported_error) {
     fiberio::use_on_this_thread();
-    fiberio::address_family_not_supported e;
+    fiberio::address_family_not_supported_error e;
     ASSERT_EQ("address family not supported", std::string(e.what()));
 }
 
