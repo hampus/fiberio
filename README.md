@@ -105,8 +105,7 @@ fundamentally event-based and not thread-based.
 Requirements
 ------------
 
-The library is built using [Meson](http://mesonbuild.com/) and currently
-depends on [Boost.Fiber](https://www.boost.org/doc/libs/release/libs/fiber/doc/html/index.html),
+The library is built using [Meson](http://mesonbuild.com/) and depends on [Boost.Fiber](https://www.boost.org/doc/libs/release/libs/fiber/doc/html/index.html),
 [libuv](http://libuv.org/) and (optionally)
 [Google Test](https://github.com/google/googletest). It also requires C++14. If
 C++17 is available, it will make use of it (specify -Dcpp_std=c++17 to meson).
