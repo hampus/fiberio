@@ -150,7 +150,9 @@ std::size_t socket_impl::read(char* buf, std::size_t size)
         wait_for_read_to_finish();
         reading_ = false;
 
-        if (len_ == ERROR_EOF) {
+        if (closed_) {
+            throw socket_closed_error();
+        } else if (len_ == ERROR_EOF) {
             close();
             throw socket_closed_error();
         } else if (len_ == ERROR_READ_FAILED) {

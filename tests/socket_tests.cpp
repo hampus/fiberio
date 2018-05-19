@@ -302,20 +302,14 @@ TEST(server_socket, concurrent_reads_and_close) {
 
     auto server_future = fibers::async([&server]() {
         auto server_client = server.accept();
-        try {
-            server_client.read_string();
-        } catch (fiberio::socket_closed_error& e) {
-        }
+        ASSERT_THROW(server_client.read_string(), fiberio::socket_closed_error);
     });
 
     fiberio::socket client;
     client.connect(server.get_host(), server.get_port());
 
     auto client_future1 = fibers::async([&client]() {
-        try {
-            client.read_string();
-        } catch (fiberio::socket_closed_error& e) {
-        }
+        ASSERT_THROW(client.read_string(), fiberio::socket_closed_error);
     });
 
     auto client_future2 = fibers::async([&client]() {
