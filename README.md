@@ -79,10 +79,10 @@ These are some advantages of fibers:
 * Using a stack for memory allocations is very fast (same for threads).
 
 Fibers also have these disadvantages:
-* Can't use existing libraries or API:s that use blocking I/O or similar (unless
-  they explicitly use this library for all their blocking calls).
-* There's no easy way to tell if a function call is "safe" or might block the
-  whole thread rather than just the fiber itself.
+* Can't use existing libraries or API:s that use blocking I/O (unless they
+  explicitly use this library for all their blocking calls).
+* There's no easy way to tell if a function call is "safe" or if it might block
+  either the whole thread or yield control of the fiber.
 * Page faults block the whole thread and won't suspend only the fiber itself
   (makes memory-mapped I/O impossible).
 * Running fibers on multiple threads basically requires the same kind of
