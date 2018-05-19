@@ -1,7 +1,8 @@
 FiberIO - fiber-based C++ network library
 =========================================
 
-[![Build Status](https://travis-ci.org/hampus/fiberio.svg?branch=master)](https://travis-ci.org/hampus/fiberio)
+[![Travis](https://img.shields.io/travis/hampus/fiberio.svg)](https://travis-ci.org/hampus/fiberio)
+[![license](https://img.shields.io/github/license/hampus/fiberio.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 This is an experimental C++ network library built on top of
 [Boost.Fiber](https://www.boost.org/doc/libs/release/libs/fiber/doc/html/index.html)
