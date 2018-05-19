@@ -123,6 +123,8 @@ On Arch Linux, you can install everything using pacman:
 
     $ sudo pacman -S  pkg-config meson boost libuv gtest
 
+It's a good idea to also install ccache if rebuilding often.
+
 
 Building
 --------
@@ -165,7 +167,17 @@ To get a coverage report, install lcov and build like this:
 
     $ meson -Db_coverage=true build
     $ cd build
-    $ ninja test && ninja coverage
+    $ ninja clean && ninja test && ninja coverage
+
+Simply repeat the last command to rebuild from scratch.
+
+There's also a script for generating coverage reports directly with lcov. To
+use it, change the last command to this instead:
+
+    $ ninja clean && ninja test && ../lcov.sh
+
+The lcov script generates better reports, since it won't include the example
+applications in the coverage. There are intentionally no tests for those.
 
 
 Building with Docker
