@@ -1,0 +1,4 @@
+<map id="fiberio::io_error" name="fiberio::io_error">
+<area shape="rect" id="node3" href="$classfiberio_1_1address__family__not__supported__error.html" title="Thrown when e.g. trying to use IPv6 and it&#39;s not supported on the system. " alt="" coords="5,155,159,196"/>
+<area shape="rect" id="node4" href="$classfiberio_1_1socket__closed__error.html" title="This is thrown when something fails because the connection was closed. " alt="" coords="183,155,333,196"/>
+</map>

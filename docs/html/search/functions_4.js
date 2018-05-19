@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['listen',['listen',['../classfiberio_1_1server__socket.html#a429d89bc531192da15f5d62276dec905',1,'fiberio::server_socket']]]
+  ['io_5ferror',['io_error',['../classfiberio_1_1io__error.html#aa42972b5f78c883e873118536e3e0f5a',1,'fiberio::io_error']]]
 ];
