@@ -40,6 +40,7 @@ WORKDIR /src
 
 CMD meson -Dcpp_std=c++17 -Db_coverage=true build && cd build && ninja test && \
     bash -c 'if [ "$COVERAGE" == "1" ] ; then \
-        ninja coverage && echo "Running coveralls-lcov" && \
-        coveralls-lcov meson-logs/coverage.info ; \
+        lcov --capture --directory $(readlink -f ..) --no-external \
+        --output-file coverage.info && \
+        echo "Running coveralls-lcov" && coveralls-lcov coverage.info ; \
     fi'
