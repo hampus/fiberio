@@ -136,7 +136,7 @@ std::size_t socket_impl::read(char* buf, std::size_t size)
     if (closed_) throw socket_closed_error{};
     if (reading_) {
         if (DEBUG_LOG) std::cout << "socket_impl: concurrent read\n";
-        throw std::runtime_error("concurrent read");
+        throw io_error{"concurrent read"};
     }
     reading_ = true;
     buf_ = buf;

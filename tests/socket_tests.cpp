@@ -212,3 +212,120 @@ TEST(server_socket, fail_to_connect) {
     ASSERT_THROW(client.connect("127.0.0.1", -1), fiberio::io_error);
     ASSERT_THROW(client.connect("127.0.0.1", 1), fiberio::io_error);
 }
+
+TEST(server_socket, read_past_eof) {
+    fiberio::use_on_this_thread();
+
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 0);
+    server.listen(50);
+
+    auto server_future = fibers::async([&server]() {
+        auto server_client = server.accept();
+        server_client.write("abc");
+        server_client.close();
+    });
+
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+
+    server_future.get();
+    server.close();
+
+    std::string data = client.read_string_exactly(3);
+    ASSERT_THROW(client.read_string_exactly(1), fiberio::socket_closed_error);
+
+    client.close();
+}
+
+TEST(server_socket, write_after_other_end_closed) {
+    fiberio::use_on_this_thread();
+
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 0);
+    server.listen(50);
+
+    auto server_future = fibers::async([&server]() {
+        auto server_client = server.accept();
+        server_client.write("abc");
+        server_client.close();
+    });
+
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+
+    server_future.get();
+    server.close();
+
+    client.write("a");
+
+    ASSERT_THROW(client.read_string_exactly(4), fiberio::socket_closed_error);
+
+    client.close();
+}
+
+TEST(server_socket, large_write) {
+    fiberio::use_on_this_thread();
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 0);
+    server.listen(50);
+
+    auto server_future = fibers::async([&server]() {
+        auto server_client = server.accept();
+        std::string data;
+        try {
+            while (true) {
+                data += server_client.read_string();
+            }
+        } catch (fiberio::socket_closed_error& e) {
+        }
+        return data;
+    });
+
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+
+    std::string data_to_write(1024*1024, 't');
+    client.write(data_to_write);
+    client.close();
+
+    ASSERT_EQ(data_to_write, server_future.get());
+
+    server.close();
+}
+
+TEST(server_socket, concurrent_reads_and_close) {
+    fiberio::use_on_this_thread();
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 0);
+    server.listen(50);
+
+    auto server_future = fibers::async([&server]() {
+        auto server_client = server.accept();
+        try {
+            server_client.read_string();
+        } catch (fiberio::socket_closed_error& e) {
+        }
+    });
+
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+
+    auto client_future1 = fibers::async([&client]() {
+        try {
+            client.read_string();
+        } catch (fiberio::socket_closed_error& e) {
+        }
+    });
+
+    auto client_future2 = fibers::async([&client]() {
+        // This is not recommended in application code!
+        ASSERT_THROW(client.read_string(), fiberio::io_error);
+    });
+
+    client_future2.get();
+    client.close();
+    client_future1.get();
+    server_future.get();
+    server.close();
+}
