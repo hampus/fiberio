@@ -17,6 +17,8 @@ matrix:
     env: DOCKERENV=archlinux COVERAGE=0
 
 before_install:
+  - 'echo ''{"ipv6": true, "fixed-cidr-v6": "2001:db8::/64"}'' | sudo tee /etc/docker/daemon.json'
+  - sudo service docker restart
   - docker build -t fiberio-$DOCKERENV -f ci/$DOCKERENV/Dockerfile .
 
 script:
