@@ -34,4 +34,4 @@ WORKDIR /src
 # Build command
 #
 
-CMD meson build && cd build && ninja test
+CMD meson -Dcpp_std=c++17 build && cd build && ninja test
