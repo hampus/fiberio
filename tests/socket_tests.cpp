@@ -8,12 +8,29 @@ namespace this_fiber = boost::this_fiber;
 
 TEST(server_socket, create_server_socket) {
     fiberio::use_on_this_thread();
+
     fiberio::server_socket server;
     server.bind("127.0.0.1", 0);
     ASSERT_EQ("127.0.0.1", server.get_host());
     ASSERT_NE(0, server.get_port());
+
     server.listen(50);
     server.close();
+}
+
+TEST(server_socket, move_server_socket) {
+    fiberio::use_on_this_thread();
+
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 0);
+    ASSERT_EQ("127.0.0.1", server.get_host());
+    ASSERT_NE(0, server.get_port());
+
+    // Move-construction
+    fiberio::server_socket server2{ std::move(server) };
+
+    server2.listen(50);
+    server2.close();
 }
 
 TEST(server_socket, connect_sockets) {
@@ -32,6 +49,28 @@ TEST(server_socket, connect_sockets) {
     server_future.get();
 
     client.close();
+    server.close();
+}
+
+TEST(server_socket, move_socket) {
+    fiberio::use_on_this_thread();
+
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 0);
+    server.listen(50);
+
+    auto server_future = fibers::async([&server]() {
+        server.accept();
+    });
+
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+
+    fiberio::socket client2{ std::move(client) };
+
+    server_future.get();
+
+    client2.close();
     server.close();
 }
 
