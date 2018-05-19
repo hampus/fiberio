@@ -9,8 +9,11 @@
 SCRIPT_DIR=$(dirname "$(readlink -f "$BASH_SOURCE")")
 REPORT_PATH=$(readlink -f .)/lcov-html/index.html
 
-lcov --capture --directory $SCRIPT_DIR --no-external --output-file coverage.info
+echo "Capturing coverage data with lcov..."
+lcov --capture --directory $SCRIPT_DIR --no-external --quiet \
+    --output-file coverage.info
 
+echo "Generating coverage HTML report..."
 genhtml coverage.info --output-directory lcov-html
 
 echo
