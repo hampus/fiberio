@@ -10,35 +10,27 @@ namespace {
 
 constexpr bool DEBUG_LOG = false;
 
-void print_thread_id()
-{
-    std::thread::id this_id = std::this_thread::get_id();
-    std::cout << "thread " << this_id << ": ";
-}
-
 class thread_uv_loop
 {
 public:
     thread_uv_loop()
         : ready_{false}
     {
-        if (DEBUG_LOG) {
+#if DEBUG_LOG
             print_thread_id();
             std::cout << "thread created\n";
-        }
+#endif
     }
 
     ~thread_uv_loop() {
         if (ready_) {
             if (DEBUG_LOG) {
-                print_thread_id();
                 std::cout << "destroying uv loop\n";
             }
             close_handle(&timer_);
             uv_loop_close(&loop_);
         } else {
             if (DEBUG_LOG) {
-                print_thread_id();
                 std::cout << "thread destroyed without uv loop\n";
             }
         }
@@ -47,7 +39,6 @@ public:
     void make_ready() {
         if (!ready_) {
             if (DEBUG_LOG) {
-                print_thread_id();
                 std::cout << "initializing uv loop\n";
             }
             uv_loop_init(&loop_);

@@ -40,15 +40,6 @@ inline void close_handle(uv_timer_t* handle) {
 
 void check_uv_status(int status);
 
-template<class T>
-inline T wait_for_future(boost::fibers::future<T> future) {
-    try {
-        return future.get();
-    } catch (boost::fibers::future_error& e) {
-        std::rethrow_exception(future.get_exception_ptr());
-    }
-}
-
 }
 
 #endif

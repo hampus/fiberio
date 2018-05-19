@@ -195,6 +195,12 @@ TEST(server_socket, destroy_new_server_socket) {
     fiberio::server_socket server;
 }
 
+TEST(server_socket, address_family_not_supported) {
+    fiberio::use_on_this_thread();
+    fiberio::address_family_not_supported e;
+    ASSERT_EQ("address family not supported", std::string(e.what()));
+}
+
 TEST(server_socket, fail_to_connect) {
     fiberio::use_on_this_thread();
 
@@ -204,4 +210,5 @@ TEST(server_socket, fail_to_connect) {
     ASSERT_THROW(client.connect("::", 123), fiberio::io_error);
     ASSERT_THROW(client.connect("127.0.0.1", 0), fiberio::io_error);
     ASSERT_THROW(client.connect("127.0.0.1", -1), fiberio::io_error);
+    ASSERT_THROW(client.connect("127.0.0.1", 1), fiberio::io_error);
 }

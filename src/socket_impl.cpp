@@ -125,7 +125,7 @@ void socket_impl::connect(const std::string& host, uint16_t port)
         int status = uv_tcp_connect(&req, &tcp_, addr->ai_addr,
             connection_callback);
         check_uv_status(status);
-        wait_for_future(promise.get_future());
+        promise.get_future().get();
     } catch (uv_error& e) {
         throw io_error{ e.what() };
     }
@@ -198,7 +198,7 @@ void socket_impl::write(const char* data, std::size_t len)
     int status = uv_write(&req, (uv_stream_t*) &tcp_, bufs, 1, write_callback);
     check_uv_status(status);
 
-    wait_for_future(promise.get_future());
+    promise.get_future().get();
     if (DEBUG_LOG) std::cout << "write finished\n";
 }
 
@@ -224,7 +224,7 @@ void socket_impl::shutdown()
     uv_req_set_data((uv_req_t*) &req, &promise);
     int status = uv_shutdown(&req, (uv_stream_t*) &tcp_, shutdown_callback);
     check_uv_status(status);
-    wait_for_future(promise.get_future());
+    promise.get_future().get();
 }
 
 }
