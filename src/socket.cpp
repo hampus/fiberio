@@ -42,20 +42,32 @@ void socket::read_exactly(char* buf, std::size_t size)
 
 std::string socket::read_string(std::size_t count, bool shrink_to_fit)
 {
-    std::string buf(count, '\0');
-    std::size_t bytes_read = read(buf.data(), buf.size());
-    if (bytes_read < count) {
-        buf.erase(bytes_read);
-        if (shrink_to_fit) buf.shrink_to_fit();
-    }
-    return buf;
+#if __cplusplus >= 201703L
+        std::string buf(count, '\0');
+        std::size_t bytes_read = read(buf.data(), buf.size());
+        if (bytes_read < count) {
+            buf.erase(bytes_read);
+            if (shrink_to_fit) buf.shrink_to_fit();
+        }
+        return buf;
+#else
+        std::vector<char> buf(count, '\0');
+        std::size_t bytes_read = read(buf.data(), buf.size());
+        return std::string(buf.data(), bytes_read);
+#endif
 }
 
 std::string socket::read_string_exactly(std::size_t count)
 {
-    std::string buf(count, '\0');
-    read_exactly(buf.data(), buf.size());
-    return buf;
+#if __cplusplus >= 201703L
+        std::string buf(count, '\0');
+        read_exactly(buf.data(), buf.size());
+        return buf;
+#else
+        std::vector<char> buf(count, '\0');
+        read_exactly(buf.data(), buf.size());
+        return std::string(buf.data(), buf.size());
+#endif
 }
 
 void socket::write(const std::string& data) {

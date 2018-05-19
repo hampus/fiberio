@@ -1,4 +1,4 @@
-project('fiberio', 'cpp', default_options : ['cpp_std=c++17'])
+project('fiberio', 'cpp', default_options : ['cpp_std=c++14'])
 
 if get_option('valgrind')
   message('Adding BOOST_USE_VALGRIND. Requires a compatible Boost build.')

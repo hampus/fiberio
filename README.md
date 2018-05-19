@@ -107,7 +107,8 @@ Requirements
 The library is built using [Meson](http://mesonbuild.com/) and currently
 depends on [Boost.Fiber](https://www.boost.org/doc/libs/release/libs/fiber/doc/html/index.html),
 [libuv](http://libuv.org/) and (optionally)
-[Google Test](https://github.com/google/googletest). It also requires C++17.
+[Google Test](https://github.com/google/googletest). It also requires C++14. If
+C++17 is available, it will make use of it (specify -Dcpp_std=c++17 to meson).
 
 On Ubuntu 18.04, you can install dependencies with:
 
@@ -127,12 +128,14 @@ Building
 
 Use Meson:
 
-    $ meson build
+    $ meson -Dcpp_std=c++17 -Dbuildtype=release build
     $ cd build
     $ ninja test
 
 This builds the library and some example applications under build/examples/. It
-will also run all the unit tests.
+will also run all the unit tests. You can leave out cpp_std if you don't have
+a C++17 compatible compiler.
+
 
 Valgrind
 --------
