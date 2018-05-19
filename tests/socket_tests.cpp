@@ -320,3 +320,31 @@ TEST(server_socket, concurrent_reads_and_close) {
     server_future.get();
     server.close();
 }
+
+TEST(server_socket, partial_string_read) {
+    fiberio::use_on_this_thread();
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 0);
+    server.listen(50);
+
+    const std::size_t buf_size{ 256*1024 };
+    auto server_future = fibers::async([&server]() {
+        auto server_client = server.accept();
+        auto s1 = server_client.read_string(buf_size);
+        return s1;
+    });
+
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+    client.write("0123456789abcdefghijklmnopqrstuvx");
+
+    auto result = server_future.get();
+    ASSERT_EQ("0123456789abcdefghijklmnopqrstuvx", result);
+
+    // The C++ string implementation is allowed to leave the capacity larger
+    // than the contents, but we want to check that it has been shrunk at least
+    ASSERT_LT(result.capacity(), buf_size);
+
+    client.close();
+    server.close();
+}
