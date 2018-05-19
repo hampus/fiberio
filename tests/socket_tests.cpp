@@ -54,21 +54,24 @@ TEST(server_socket, connect_sockets) {
 
 TEST(server_socket, connect_sockets_ipv6) {
     fiberio::use_on_this_thread();
-    fiberio::server_socket server;
-    server.bind("::1", 0);
-    server.listen(50);
+    try {
+        fiberio::server_socket server;
+        server.bind("::1", 0);
+        server.listen(50);
 
-    auto server_future = fibers::async([&server]() {
-        server.accept();
-    });
+        auto server_future = fibers::async([&server]() {
+            server.accept();
+        });
 
-    fiberio::socket client;
-    client.connect(server.get_host(), server.get_port());
+        fiberio::socket client;
+        client.connect(server.get_host(), server.get_port());
+        server_future.get();
 
-    server_future.get();
-
-    client.close();
-    server.close();
+        client.close();
+        server.close();
+    } catch (fiberio::address_family_not_supported& e) {
+        std::cout << "WARNING: IPv6 is not supported. Ignoring.\n";
+    }
 }
 
 TEST(server_socket, move_socket) {

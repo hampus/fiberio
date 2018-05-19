@@ -38,6 +38,8 @@ void check_uv_status(int status) {
             uv_err_name(status) << "\n";
         if (status == UV_ENOTCONN || status == UV_EBADF) {
             throw socket_closed_error{};
+        } else if (status == UV_EAI_ADDRFAMILY) {
+            throw address_family_not_supported{};
         } else {
             throw uv_error{status};
         }

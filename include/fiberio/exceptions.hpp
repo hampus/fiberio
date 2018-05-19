@@ -20,6 +20,15 @@ public:
     socket_closed_error() : io_error{"stream closed"} {}
 };
 
+//! Thrown when e.g. trying to use IPv6 and it's not supported on the system
+class address_family_not_supported : public io_error
+{
+public:
+    address_family_not_supported()
+        : io_error{"address family not supported"} {}
+};
+
+
 }
 
 #endif

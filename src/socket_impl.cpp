@@ -127,9 +127,6 @@ void socket_impl::connect(const std::string& host, uint16_t port)
         check_uv_status(status);
         wait_for_future(promise.get_future());
     } catch (uv_error& e) {
-        if (e.get_status() == UV_EAI_NONAME) {
-            if (DEBUG_LOG) std::cout << "Failed to find host or port\n";
-        }
         throw io_error{ e.what() };
     }
 }
