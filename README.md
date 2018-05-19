@@ -157,6 +157,16 @@ or change the Meson configuration later:
 Older versions of Meson works differently (read the manual).
 
 
+Test Coverage
+-------------
+
+To get a coverage report, install lcov and build like this:
+
+    $ meson -Db_coverage=true build
+    $ cd build
+    $ ninja test && ninja coverage
+
+
 Building with Docker
 --------------------
 

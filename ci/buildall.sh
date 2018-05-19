@@ -17,8 +17,10 @@ function buildenv() {
 function buildcode() {
     DOCKERENV=$1
     CXX=$2
+    COVERAGE=$3
     printf "Building project in $DOCKERENV with $CXX\n\n"
-    if docker run --rm -e CXX=$CXX fiberio-$DOCKERENV ; then
+    if docker run --rm -e CXX=$CXX -e COVERAGE=$COVERAGE \
+            fiberio-$DOCKERENV ; then
         printf "\nSucceeded to build source code in $DOCKERENV with $CXX\n\n"
     else
         printf "\nFAILED to build source code in $DOCKERENV with $CXX\n\n"
@@ -28,7 +30,7 @@ function buildcode() {
 buildenv ubuntu18.04
 buildenv archlinux
 
-buildcode ubuntu18.04 g++
-buildcode ubuntu18.04 clang++
-buildcode archlinux g++
-buildcode archlinux clang++
+buildcode ubuntu18.04 g++ 1
+buildcode ubuntu18.04 clang++ 0
+buildcode archlinux g++ 0
+buildcode archlinux clang++ 0
