@@ -3,8 +3,30 @@
 
 #include <stdexcept>
 #include <uv.h>
+#include <fiberio/exceptions.hpp>
+#include <boost/fiber/all.hpp>
 
 namespace fiberio {
+
+class uv_error : public std::runtime_error
+{
+public:
+    uv_error(int status)
+        : runtime_error{ std::string{uv_err_name(status)} + ": "
+            + uv_strerror(status)}, status_{status} {}
+
+    int get_status() { return status_; }
+
+private:
+    int status_;
+};
+
+class dummy_lock
+{
+public:
+    void lock() {}
+    void unlock() {}
+};
 
 void close_handle(uv_handle_t* handle);
 
@@ -16,18 +38,16 @@ inline void close_handle(uv_timer_t* handle) {
     close_handle(reinterpret_cast<uv_handle_t*>(handle));
 }
 
-inline void check_uv_status(int status) {
-    if (status < 0) {
-        throw std::runtime_error(uv_err_name(status));
+void check_uv_status(int status);
+
+template<class T>
+inline T wait_for_future(boost::fibers::future<T> future) {
+    try {
+        return future.get();
+    } catch (boost::fibers::future_error& e) {
+        std::rethrow_exception(future.get_exception_ptr());
     }
 }
-
-class dummy_lock
-{
-public:
-    void lock() {}
-    void unlock() {}
-};
 
 }
 

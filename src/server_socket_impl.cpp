@@ -27,9 +27,7 @@ void connection_callback(uv_stream_t* server, int status)
 
 std::string addr_to_string(int af, const void* src)
 {
-    if (af != AF_INET && af != AF_INET6) {
-        throw std::runtime_error("Unknown address family");
-    }
+    assert(af == AF_INET || af == AF_INET6);
     char buf[std::max(INET_ADDRSTRLEN, INET6_ADDRSTRLEN)];
     auto result = inet_ntop(af, src, buf, sizeof(buf));
     if (!result) throw std::runtime_error("inet_ntop failed");

@@ -52,6 +52,25 @@ TEST(server_socket, connect_sockets) {
     server.close();
 }
 
+TEST(server_socket, connect_sockets_ipv6) {
+    fiberio::use_on_this_thread();
+    fiberio::server_socket server;
+    server.bind("::1", 0);
+    server.listen(50);
+
+    auto server_future = fibers::async([&server]() {
+        server.accept();
+    });
+
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+
+    server_future.get();
+
+    client.close();
+    server.close();
+}
+
 TEST(server_socket, move_socket) {
     fiberio::use_on_this_thread();
 
@@ -123,7 +142,6 @@ TEST(server_socket, read_exactly) {
     server.close();
 }
 
-
 TEST(server_socket, read_strings) {
     fiberio::use_on_this_thread();
     fiberio::server_socket server;
@@ -148,4 +166,39 @@ TEST(server_socket, read_strings) {
 
     client.close();
     server.close();
+}
+
+TEST(server_socket, closed_socket) {
+    fiberio::use_on_this_thread();
+    fiberio::socket client;
+    ASSERT_THROW(client.read_string(), fiberio::socket_closed_error);
+    ASSERT_THROW(client.read_string(), fiberio::socket_closed_error);
+    ASSERT_THROW(client.write("test"), fiberio::socket_closed_error);
+    client.close();
+    ASSERT_THROW(client.read_string(), fiberio::socket_closed_error);
+    ASSERT_THROW(client.read_string(), fiberio::socket_closed_error);
+    ASSERT_THROW(client.write("test"), fiberio::socket_closed_error);
+    ASSERT_THROW(client.connect("127.0.0.1", 1000),
+        fiberio::socket_closed_error);
+}
+
+TEST(server_socket, destroy_new_socket) {
+    fiberio::use_on_this_thread();
+    fiberio::socket client;
+}
+
+TEST(server_socket, destroy_new_server_socket) {
+    fiberio::use_on_this_thread();
+    fiberio::server_socket server;
+}
+
+TEST(server_socket, fail_to_connect) {
+    fiberio::use_on_this_thread();
+
+    fiberio::socket client;
+    ASSERT_THROW(client.connect("!", 123), fiberio::io_error);
+    ASSERT_THROW(client.connect("0.0.0.0", 123), fiberio::io_error);
+    ASSERT_THROW(client.connect("::", 123), fiberio::io_error);
+    ASSERT_THROW(client.connect("127.0.0.1", 0), fiberio::io_error);
+    ASSERT_THROW(client.connect("127.0.0.1", -1), fiberio::io_error);
 }

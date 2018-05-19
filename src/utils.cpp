@@ -32,4 +32,16 @@ void close_handle(uv_handle_t* handle)
     promise.get_future().get();
 }
 
+void check_uv_status(int status) {
+    if (status < 0) {
+        if (DEBUG_LOG) std::cout << "check_uv_status detected an error: " <<
+            uv_err_name(status) << "\n";
+        if (status == UV_ENOTCONN || status == UV_EBADF) {
+            throw socket_closed_error{};
+        } else {
+            throw uv_error{status};
+        }
+    }
+}
+
 }

@@ -41,7 +41,7 @@ addrinfo_ptr getaddrinfo(const std::string& node, const std::string& service)
         node.c_str(), service.c_str(), 0);
     check_uv_status(status);
 
-    struct addrinfo* res = promise.get_future().get();
+    struct addrinfo* res = wait_for_future(promise.get_future());
 
     return addrinfo_ptr(res, uv_freeaddrinfo);
 }
