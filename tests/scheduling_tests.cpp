@@ -151,3 +151,85 @@ TEST(scheduling, abort_sleeping) {
     thread.get();
     fiber.get();
 }
+
+TEST(scheduling, switch_back_and_forth_to_a_thread) {
+    fiberio::use_on_this_thread();
+
+    const uint64_t num_iterations{ 10'000 };
+
+    int shared_int = 0;
+    fibers::mutex mutex;
+    fibers::condition_variable cond;
+
+    auto thread = std::async(std::launch::async, [&]() {
+        for (uint64_t i = 0; i < num_iterations; i++) {
+            std::unique_lock<fibers::mutex> lock(mutex);
+            while (shared_int != 1) {
+                cond.wait(lock);
+            }
+            shared_int = 0;
+            cond.notify_one();
+        }
+    });
+
+    std::unique_lock<fibers::mutex> lock(mutex);
+    for (uint64_t i = 0; i < num_iterations; i++) {
+        while (shared_int != 0) {
+            cond.wait(lock);
+        }
+        shared_int = 1;
+        cond.notify_one();
+    }
+    while (shared_int != 0) {
+        cond.wait(lock);
+    }
+
+    thread.get();
+}
+
+TEST(scheduling, switch_between_multiple_threads) {
+    fiberio::use_on_this_thread();
+
+    const uint64_t num_iterations{ 10'000 };
+
+    int shared_int = 0;
+    fibers::mutex mutex;
+    fibers::condition_variable cond;
+
+    auto thread1 = std::async(std::launch::async, [&]() {
+        for (uint64_t i = 0; i < num_iterations; i++) {
+            std::unique_lock<fibers::mutex> lock(mutex);
+            while (shared_int != 1) {
+                cond.wait(lock);
+            }
+            shared_int = 2;
+            cond.notify_all();
+        }
+    });
+
+    auto thread2 = std::async(std::launch::async, [&]() {
+        for (uint64_t i = 0; i < num_iterations; i++) {
+            std::unique_lock<fibers::mutex> lock(mutex);
+            while (shared_int != 2) {
+                cond.wait(lock);
+            }
+            shared_int = 0;
+            cond.notify_all();
+        }
+    });
+
+    std::unique_lock<fibers::mutex> lock(mutex);
+    for (uint64_t i = 0; i < num_iterations; i++) {
+        while (shared_int != 0) {
+            cond.wait(lock);
+        }
+        shared_int = 1;
+        cond.notify_all();
+    }
+    while (shared_int != 0) {
+        cond.wait(lock);
+    }
+
+    thread1.get();
+    thread2.get();
+}
