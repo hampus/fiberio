@@ -16,10 +16,9 @@ public:
     thread_uv_loop()
         : ready_{false}
     {
-#if DEBUG_LOG
-            print_thread_id();
+        if (DEBUG_LOG) {
             std::cout << "thread created\n";
-#endif
+        }
     }
 
     ~thread_uv_loop() {
