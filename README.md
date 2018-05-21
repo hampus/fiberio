@@ -46,12 +46,13 @@ scenes. This is the same limitation that explicit asynchronous I/O on a single
 thread also has.
 
 When multiple CPU cores are needed or you want to use e.g. memory mapped file
-access, using ordinary threads is generally a better idea.
+access, using ordinary threads is generally a better idea. It's also possible
+to communicate between fibers and ordinary threads to use a mix.
 
 See
 [Boost.Fiber's](https://www.boost.org/doc/libs/release/libs/fiber/doc/html/index.html)
-documentation for details. It's not yet possible to communicate between fibers
-and other threads, but that will be supported in the future.
+documentation for more details. FiberIO support everything except changing the
+scheduler, since FiberIO is a Boost.Fiber scheduler.
 
 
 Documentation
