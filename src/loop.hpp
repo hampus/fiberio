@@ -9,6 +9,8 @@ uv_loop_t* get_uv_loop();
 
 uv_timer_t* get_scheduler_timer();
 
+uv_async_t* get_scheduler_async();
+
 }
 
 #endif

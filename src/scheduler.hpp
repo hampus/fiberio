@@ -4,6 +4,7 @@
 #include <boost/fiber/all.hpp>
 #include <chrono>
 #include <deque>
+#include <mutex>
 #include <uv.h>
 
 namespace fiberio {
@@ -33,9 +34,18 @@ public:
     scheduler& operator=(scheduler&&) = delete;
 
 private:
+    bool should_wake_up();
+    bool suspend_enter();
+    void suspend_exit();
+    bool update_notify();
+
     std::deque<boost::fibers::context*> queue_;
     uv_loop_t* loop_;
     uv_timer_t* timer_;
+    uv_async_t* async_;
+    bool wake_up_;
+    bool suspended_;
+    std::mutex mutex_;
 };
 
 }
