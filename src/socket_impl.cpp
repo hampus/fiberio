@@ -156,7 +156,7 @@ std::size_t socket_impl::read(char* buf, std::size_t size)
             close();
             throw socket_closed_error();
         } else if (len_ == ERROR_READ_FAILED) {
-            throw std::runtime_error("read failed");
+            throw io_error("read failed");
         }
 
         return len_;
