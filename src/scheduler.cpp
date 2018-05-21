@@ -39,6 +39,7 @@ void suspend_timer_callback(uv_timer_t* handle)
 }
 
 scheduler::scheduler()
+    : wake_up_{false}, suspended_{false}
 {
     if (DEBUG_LOG) std::cout << "scheduler: creating scheduler\n";
     loop_ = get_uv_loop();
