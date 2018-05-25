@@ -24,6 +24,8 @@ public:
 
     void close();
 
+    bool is_open();
+
     void on_read_finished(int64_t nread);
 
     char* get_buf() { return buf_; }

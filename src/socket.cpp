@@ -84,4 +84,9 @@ void socket::close()
     impl_->close();
 }
 
+bool socket::is_open()
+{
+    return impl_->is_open();
+}
+
 }

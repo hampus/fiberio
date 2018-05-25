@@ -138,10 +138,10 @@ std::size_t socket_impl::read(char* buf, std::size_t size)
         if (DEBUG_LOG) std::cout << "socket_impl: concurrent read\n";
         throw io_error{"concurrent read"};
     }
+
     reading_ = true;
     buf_ = buf;
     len_ = size;
-
     try {
         if (DEBUG_LOG) std::cout << "starting read\n";
         int status =
@@ -150,13 +150,14 @@ std::size_t socket_impl::read(char* buf, std::size_t size)
         wait_for_read_to_finish();
         reading_ = false;
 
-        if (closed_) {
-            throw socket_closed_error();
-        } else if (len_ == ERROR_EOF) {
+        if (len_ == ERROR_EOF) {
             close();
-            throw socket_closed_error();
         } else if (len_ == ERROR_READ_FAILED) {
             throw io_error("read failed");
+        }
+
+        if (closed_) {
+            len_ = 0;
         }
 
         return len_;
@@ -227,6 +228,11 @@ void socket_impl::shutdown()
     int status = uv_shutdown(&req, (uv_stream_t*) &tcp_, shutdown_callback);
     check_uv_status(status);
     promise.get_future().get();
+}
+
+bool socket_impl::is_open()
+{
+    return !closed_;
 }
 
 }

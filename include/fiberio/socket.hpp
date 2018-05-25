@@ -32,7 +32,8 @@ public:
     /*! \brief Reads up to size bytes into buf.
      *
      * Throws an exception on failure. fiberio::socket_closed_error is thrown
-     * on end-of-stream.
+     * if the socket was already closed. If the end-of-stream is encountered
+     * during the read, no exception is thrown unless another read call is made.
      */
     std::size_t read(char* buf, std::size_t size);
 
@@ -44,6 +45,8 @@ public:
      * Allocates a buffer of size count. If shrink_to_fit is true, it will
      * free unused buffer space before returning the string. Otherwise, it will
      * return a string with a capacity of count bytes.
+     *
+     * This works the same as read() except that it returns a string.
      */
     std::string read_string(std::size_t count = DEFAULT_BUF_SIZE,
         bool shrink_to_fit = true);
@@ -62,6 +65,13 @@ public:
      * It's safe to call this repeatedly as it's idempotent.
      */
     void close();
+
+    /*! \brief Check if the connection is open
+     *
+     * This starts out true and changes when the socket is closed or discovers
+     * that the underlying connection was closed.
+     */
+    bool is_open();
 
 private:
     std::unique_ptr<socket_impl> impl_;
