@@ -115,6 +115,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0bfc24418859bd2a1845ea6b5733a568"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfiberio_1_1socket.html#a0bfc24418859bd2a1845ea6b5733a568">close</a> ()</td></tr>
 <tr class="memdesc:a0bfc24418859bd2a1845ea6b5733a568"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closes the socket if it's not already closed.  <a href="#a0bfc24418859bd2a1845ea6b5733a568">More...</a><br /></td></tr>
 <tr class="separator:a0bfc24418859bd2a1845ea6b5733a568"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4448735cbcea844127703c19d67cd7ca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfiberio_1_1socket.html#a4448735cbcea844127703c19d67cd7ca">is_open</a> ()</td></tr>
+<tr class="memdesc:a4448735cbcea844127703c19d67cd7ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the connection is open.  <a href="#a4448735cbcea844127703c19d67cd7ca">More...</a><br /></td></tr>
+<tr class="separator:a4448735cbcea844127703c19d67cd7ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -255,6 +258,26 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a4448735cbcea844127703c19d67cd7ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4448735cbcea844127703c19d67cd7ca">&#9670;&nbsp;</a></span>is_open()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool fiberio::socket::is_open </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if the connection is open. </p>
+<p>This starts out true and changes when the socket is closed or discovers that the underlying connection was closed. </p>
+
+</div>
+</div>
 <a id="afbfbe04fee1e7f55c0b870bc6d129c38"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afbfbe04fee1e7f55c0b870bc6d129c38">&#9670;&nbsp;</a></span>read()</h2>
 
@@ -282,7 +305,7 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Reads up to size bytes into buf. </p>
-<p>Throws an exception on failure. <a class="el" href="classfiberio_1_1socket__closed__error.html" title="This is thrown when something fails because the connection was closed. ">fiberio::socket_closed_error</a> is thrown on end-of-stream. </p>
+<p>Throws an exception on failure. <a class="el" href="classfiberio_1_1socket__closed__error.html" title="This is thrown when something fails because the connection was closed. ">fiberio::socket_closed_error</a> is thrown if the socket was already closed. If the end-of-stream is encountered during the read, no exception is thrown unless another read call is made. </p>
 
 </div>
 </div>
@@ -343,7 +366,8 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Reads up to count bytes and returns it as an std::string. </p>
-<p>Allocates a buffer of size count. If shrink_to_fit is true, it will free unused buffer space before returning the string. Otherwise, it will return a string with a capacity of count bytes. </p>
+<p>Allocates a buffer of size count. If shrink_to_fit is true, it will free unused buffer space before returning the string. Otherwise, it will return a string with a capacity of count bytes.</p>
+<p>This works the same as <a class="el" href="classfiberio_1_1socket.html#afbfbe04fee1e7f55c0b870bc6d129c38" title="Reads up to size bytes into buf. ">read()</a> except that it returns a string. </p>
 
 </div>
 </div>
