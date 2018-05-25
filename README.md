@@ -214,14 +214,13 @@ int main()
     server.listen(50);
 
     while (true) {
-        auto client{ server.accept() };
         fibers::async([](fiberio::socket client) {
             char buf[4096];
-            while (true) {
+            while (client.is_open()) {
                 std::size_t bytes_read{ client.read(buf, sizeof(buf)) };
                 client.write(buf, bytes_read);
             }
-        }, std::move(client));
+        }, server.accept());
     }
 
     return 0;
@@ -236,3 +235,18 @@ socket.connect("127.0.0.1", 5531);
 ```
 
 Reading and writing works the same.
+
+There's also a standard C++ iostream wrapper for sockets. For example:
+
+```c++
+auto stream{ fiberio::connect_stream("127.0.0.1", 5555) };
+stream << 3000;
+stream.close();
+```
+
+An std::basic_iostream can also be created on the server side, e.g.:
+```c++
+auto stream{ server.accep() };
+int number;
+stream >> number;
+```

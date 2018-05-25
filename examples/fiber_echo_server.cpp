@@ -12,14 +12,13 @@ int main()
     server.listen(50);
 
     while (true) {
-        auto client{ server.accept() };
         fibers::async([](fiberio::socket client) {
             char buf[4096];
-            while (true) {
+            while (client.is_open()) {
                 std::size_t bytes_read{ client.read(buf, sizeof(buf)) };
                 client.write(buf, bytes_read);
             }
-        }, std::move(client));
+        }, server.accept());
     }
 
     return 0;
