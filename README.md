@@ -246,7 +246,7 @@ stream.close();
 
 An std::basic_iostream can also be created on the server side, e.g.:
 ```c++
-auto stream{ server.accept() };
+fiberio::socket_stream stream{ server.accept() };
 int number;
 stream >> number;
 ```
