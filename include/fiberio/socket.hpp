@@ -17,14 +17,23 @@ public:
     //! Creates a non-connected socket
     socket();
 
+    //! Creates a socket based on another
+    socket(const socket&);
+
     //! Creates a socket based on another, which will be invalid after
     socket(socket&&);
 
     //! For internal use only
-    socket(std::unique_ptr<socket_impl>&& impl);
+    socket(std::shared_ptr<socket_impl>&& impl);
 
     //! Destructor. Closes the socket if still open.
     ~socket();
+
+    //! Copy assignment
+    socket& operator=(const socket& other);
+
+    //! Move assignment
+    socket& operator=(socket&& other);
 
     //! Connects to host:port and throws an exception on failure.
     void connect(const std::string& host, uint16_t port);
@@ -74,7 +83,7 @@ public:
     bool is_open();
 
 private:
-    std::unique_ptr<socket_impl> impl_;
+    std::shared_ptr<socket_impl> impl_;
 };
 
 

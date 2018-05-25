@@ -5,5 +5,6 @@
 #include <fiberio/socket.hpp>
 #include <fiberio/server_socket.hpp>
 #include <fiberio/exceptions.hpp>
+#include <fiberio/iostream.hpp>
 
 #endif

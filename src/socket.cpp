@@ -4,13 +4,15 @@
 namespace fiberio {
 
 socket::socket()
-    : impl_{ std::make_unique<socket_impl>() }
+    : impl_{ std::make_shared<socket_impl>() }
 {
 }
 
+socket::socket(const socket&) = default;
+
 socket::socket(socket&&) = default;
 
-socket::socket(std::unique_ptr<socket_impl>&& impl)
+socket::socket(std::shared_ptr<socket_impl>&& impl)
     : impl_{ std::move(impl) }
 {
 }
@@ -18,6 +20,10 @@ socket::socket(std::unique_ptr<socket_impl>&& impl)
 socket::~socket()
 {
 }
+
+socket& socket::operator=(const socket& other) = default;
+
+socket& socket::operator=(socket&& other) = default;
 
 void socket::connect(const std::string& host, uint16_t port)
 {

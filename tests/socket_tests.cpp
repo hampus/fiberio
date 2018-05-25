@@ -377,3 +377,54 @@ TEST(server_socket, partial_string_read) {
     client.close();
     server.close();
 }
+
+TEST(server_socket, iostream_read_write) {
+    fiberio::use_on_this_thread();
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 0);
+    server.listen(50);
+
+    auto server_future = fibers::async([&server]() {
+        fiberio::socket_stream stream{ server.accept() };
+        int number;
+        stream >> number;
+        return number;
+    });
+
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+    fiberio::socket_stream stream{client};
+
+    stream << 56567;
+    stream.close();
+
+    auto result = server_future.get();
+    ASSERT_EQ(56567, result);
+
+    server.close();
+}
+
+TEST(server_socket, connect_stream) {
+    fiberio::use_on_this_thread();
+    fiberio::server_socket server;
+    server.bind("127.0.0.1", 0);
+    server.listen(50);
+
+    auto server_future = fibers::async([&server]() {
+        fiberio::socket_stream stream{ server.accept() };
+        int number;
+        stream >> number;
+        return number;
+    });
+
+    auto stream{
+        fiberio::connect_stream(server.get_host(), server.get_port()) };
+
+    stream << 56567;
+    stream.close();
+
+    auto result = server_future.get();
+    ASSERT_EQ(56567, result);
+
+    server.close();
+}

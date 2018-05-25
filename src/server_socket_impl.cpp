@@ -129,7 +129,7 @@ socket server_socket_impl::accept() {
     // Accept connection
     if (DEBUG_LOG) std::cout << "going to accept pending connection\n";
     pending_connections_--;
-    auto new_socket_impl = std::make_unique<socket_impl>();
+    auto new_socket_impl = std::make_shared<socket_impl>();
     new_socket_impl->do_accept((uv_stream_t*) &tcp_);
     return socket{ std::move(new_socket_impl) };
 }
