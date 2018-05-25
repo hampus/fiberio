@@ -60,13 +60,20 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">fiberio Namespace Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacefiberio_1_1detail"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacefiberio_1_1detail.html">detail</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfiberio_1_1address__family__not__supported__error.html">address_family_not_supported_error</a></td></tr>
@@ -85,13 +92,104 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is thrown when something fails because the connection was closed.  <a href="classfiberio_1_1socket__closed__error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a334505dc79d8951a1db4c0543505d855"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacefiberio.html#a334505dc79d8951a1db4c0543505d855">socket_stream</a> = boost::iostreams::stream&lt; <a class="el" href="classfiberio_1_1detail_1_1socket__device.html">fiberio::detail::socket_device</a> &gt;</td></tr>
+<tr class="memdesc:a334505dc79d8951a1db4c0543505d855"><td class="mdescLeft">&#160;</td><td class="mdescRight">std::basic_iostream type for reading/writing to a socket  <a href="#a334505dc79d8951a1db4c0543505d855">More...</a><br /></td></tr>
+<tr class="separator:a334505dc79d8951a1db4c0543505d855"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaddb547a03a494fbb2730f2c6ee74f48"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacefiberio.html#aaddb547a03a494fbb2730f2c6ee74f48">socket_streambuf</a> = boost::iostreams::stream_buffer&lt; <a class="el" href="classfiberio_1_1detail_1_1socket__device.html">fiberio::detail::socket_device</a> &gt;</td></tr>
+<tr class="memdesc:aaddb547a03a494fbb2730f2c6ee74f48"><td class="mdescLeft">&#160;</td><td class="mdescRight">std::basic_streambuf type for reading/writing to a socket  <a href="#aaddb547a03a494fbb2730f2c6ee74f48">More...</a><br /></td></tr>
+<tr class="separator:aaddb547a03a494fbb2730f2c6ee74f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:aaab0fbbbddd380677ff818cff5b5c367"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacefiberio.html#aaab0fbbbddd380677ff818cff5b5c367">use_on_this_thread</a> ()</td></tr>
 <tr class="memdesc:aaab0fbbbddd380677ff818cff5b5c367"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call this first thing on a thread to use FiberIO on that thread.  <a href="#aaab0fbbbddd380677ff818cff5b5c367">More...</a><br /></td></tr>
 <tr class="separator:aaab0fbbbddd380677ff818cff5b5c367"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4018074c8be6628853563b331c25d72"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacefiberio.html#a334505dc79d8951a1db4c0543505d855">socket_stream</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacefiberio.html#af4018074c8be6628853563b331c25d72">connect_stream</a> (const std::string &amp;host, uint16_t port)</td></tr>
+<tr class="memdesc:af4018074c8be6628853563b331c25d72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a connected socket stream directly.  <a href="#af4018074c8be6628853563b331c25d72">More...</a><br /></td></tr>
+<tr class="separator:af4018074c8be6628853563b331c25d72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="a334505dc79d8951a1db4c0543505d855"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a334505dc79d8951a1db4c0543505d855">&#9670;&nbsp;</a></span>socket_stream</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacefiberio.html#a334505dc79d8951a1db4c0543505d855">fiberio::socket_stream</a> = typedef boost::iostreams::stream&lt;<a class="el" href="classfiberio_1_1detail_1_1socket__device.html">fiberio::detail::socket_device</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>std::basic_iostream type for reading/writing to a socket </p>
+<p>Takes a <a class="el" href="classfiberio_1_1socket.html" title="Client socket for communicating over a network and opening connections. ">fiberio::socket</a> as constructor argument. See the C++ standard for how to use a basic_iostream and Boost.IOStreams for implementation details. </p>
+
+<p class="definition">Definition at line <a class="el" href="iostream_8hpp_source.html#l00058">58</a> of file <a class="el" href="iostream_8hpp_source.html">iostream.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aaddb547a03a494fbb2730f2c6ee74f48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaddb547a03a494fbb2730f2c6ee74f48">&#9670;&nbsp;</a></span>socket_streambuf</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacefiberio.html#aaddb547a03a494fbb2730f2c6ee74f48">fiberio::socket_streambuf</a> = typedef boost::iostreams::stream_buffer&lt;<a class="el" href="classfiberio_1_1detail_1_1socket__device.html">fiberio::detail::socket_device</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>std::basic_streambuf type for reading/writing to a socket </p>
+<p>Takes a <a class="el" href="classfiberio_1_1socket.html" title="Client socket for communicating over a network and opening connections. ">fiberio::socket</a> as constructor argument. See the C++ standard for how to use a basic_streambuf and Boost.IOStreams for implementation details. </p>
+
+<p class="definition">Definition at line <a class="el" href="iostream_8hpp_source.html#l00066">66</a> of file <a class="el" href="iostream_8hpp_source.html">iostream.hpp</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="af4018074c8be6628853563b331c25d72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4018074c8be6628853563b331c25d72">&#9670;&nbsp;</a></span>connect_stream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacefiberio.html#a334505dc79d8951a1db4c0543505d855">socket_stream</a> fiberio::connect_stream </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>host</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>port</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a connected socket stream directly. </p>
+
+<p class="definition">Definition at line <a class="el" href="iostream_8hpp_source.html#l00069">69</a> of file <a class="el" href="iostream_8hpp_source.html">iostream.hpp</a>.</p>
+
+</div>
+</div>
 <a id="aaab0fbbbddd380677ff818cff5b5c367"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaab0fbbbddd380677ff818cff5b5c367">&#9670;&nbsp;</a></span>use_on_this_thread()</h2>
 

@@ -1,6 +1,7 @@
 <map id="include/fiberio/all.hpp" name="include/fiberio/all.hpp">
 <area shape="rect" id="node2" href="$fiberio_8hpp.html" title="fiberio/fiberio.hpp" alt="" coords="5,80,127,107"/>
-<area shape="rect" id="node3" href="$socket_8hpp.html" title="fiberio/socket.hpp" alt="" coords="99,155,225,181"/>
+<area shape="rect" id="node3" href="$socket_8hpp.html" title="fiberio/socket.hpp" alt="" coords="93,162,218,189"/>
 <area shape="rect" id="node6" href="$server__socket_8hpp.html" title="fiberio/server_socket.hpp" alt="" coords="202,80,370,107"/>
-<area shape="rect" id="node8" href="$exceptions_8hpp.html" title="fiberio/exceptions.hpp" alt="" coords="398,80,547,107"/>
+<area shape="rect" id="node8" href="$exceptions_8hpp.html" title="fiberio/exceptions.hpp" alt="" coords="394,80,543,107"/>
+<area shape="rect" id="node10" href="$iostream_8hpp.html" title="fiberio/iostream.hpp" alt="" coords="709,80,845,107"/>
 </map>
