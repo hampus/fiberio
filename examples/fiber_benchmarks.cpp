@@ -33,7 +33,7 @@ void bench_echo_one_byte()
     server.bind("127.0.0.1", 5502);
     server.listen(50);
 
-    const uint64_t num_iterations{ 50 };
+    const uint64_t num_iterations{ 100 };
     const int num_clients{ 1000 };
 
     auto server_future = fibers::async([&server]() {
@@ -89,7 +89,7 @@ void check_result(int result)
 
 void bench_echo_one_byte_ideal_unix_socket_pair()
 {
-    const uint64_t num_iterations{ 50 };
+    const uint64_t num_iterations{ 100 };
     const int num_clients{ 1000 };
 
     std::vector<int> server_fds;
@@ -122,7 +122,7 @@ void bench_echo_one_byte_ideal_unix_socket_pair()
 
 void bench_echo_one_byte_raw_threaded_unix_socket_pair()
 {
-    const uint64_t num_iterations{ 50 };
+    const uint64_t num_iterations{ 100 };
     const int num_clients{ 1000 };
 
     std::vector<int> server_fds;
@@ -171,7 +171,7 @@ void bench_echo_one_byte_raw_threaded_unix_socket_pair()
 
 void bench_fiber_switching()
 {
-    const uint64_t num_iterations{ 1000'000 };
+    const uint64_t num_iterations{ 5000'000 };
 
     int shared_int = 0;
     dummy_lock lock;
@@ -201,9 +201,22 @@ void bench_fiber_switching()
     measure.finish(2 * num_iterations);
 }
 
+void bench_fiber_creation()
+{
+    const uint64_t num_iterations{ 5000'000 };
+
+    time_measure measure;
+    for (uint64_t i = 0; i < num_iterations; i++) {
+        auto thread = fibers::fiber([]() {});
+        thread.join();
+    }
+    measure.finish(num_iterations);
+}
+
+
 void bench_thread_switching()
 {
-    const uint64_t num_iterations{ 100'000 };
+    const uint64_t num_iterations{ 1000'000 };
 
     int shared_int = 0;
     std::mutex mutex;
@@ -236,6 +249,18 @@ void bench_thread_switching()
     future.get();
 }
 
+void bench_thread_creation()
+{
+    const uint64_t num_iterations{ 500'000 };
+
+    time_measure measure;
+    for (uint64_t i = 0; i < num_iterations; i++) {
+        auto thread = std::thread([]() {});
+        thread.join();
+    }
+    measure.finish(num_iterations);
+}
+
 int main()
 {
     std::cout << "bench_echo_one_byte\n";
@@ -250,7 +275,13 @@ int main()
     std::cout << "\nbench_fiber_switching\n";
     std::async(bench_fiber_switching).get();
 
+    std::cout << "\nbench_fiber_creation\n";
+    std::async(bench_fiber_creation).get();
+
     std::cout << "\nbench_thread_switching\n";
     std::async(bench_thread_switching).get();
+
+    std::cout << "\nbench_thread_creation\n";
+    std::async(bench_thread_creation).get();
     return 0;
 }
