@@ -25,6 +25,34 @@ public:
     void unlock() {}
 };
 
+void bench_many_fibers()
+{
+    const uint64_t num_fibers{ 100'000 };
+    fiberio::use_on_this_thread();
+
+    bool should_exit = false;
+    dummy_lock lock;
+    fibers::condition_variable_any cond;
+
+    time_measure measure;
+    std::vector<fibers::future<void>> futures(num_fibers);
+
+    for (uint64_t i = 0; i < num_fibers; i++) {
+        futures[i] = fibers::async([&]() {
+            while(!should_exit) cond.wait(lock);
+        });
+    }
+
+    should_exit = true;
+    cond.notify_all();
+
+    for (uint64_t i = 0; i < num_fibers; i++) {
+        futures[i].get();
+    }
+
+    measure.finish(num_fibers);
+}
+
 void bench_echo_one_byte()
 {
     fiberio::use_on_this_thread();
@@ -263,7 +291,10 @@ void bench_thread_creation()
 
 int main()
 {
-    std::cout << "bench_echo_one_byte\n";
+    std::cout << "\nbench_many_fibers\n";
+    std::async(bench_many_fibers).get();
+
+    std::cout << "\nbench_echo_one_byte\n";
     std::async(bench_echo_one_byte).get();
 
     std::cout << "\nbench_echo_one_byte_ideal_unix_socket_pair\n";
