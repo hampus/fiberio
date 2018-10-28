@@ -417,8 +417,9 @@ TEST(server_socket, connect_stream) {
         return number;
     });
 
-    auto stream{
-        fiberio::connect_stream(server.get_host(), server.get_port()) };
+    fiberio::socket client;
+    client.connect(server.get_host(), server.get_port());
+    fiberio::socket_stream stream{ client };
 
     stream << 56567;
     stream.close();

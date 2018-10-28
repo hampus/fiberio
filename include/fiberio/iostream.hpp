@@ -1,7 +1,9 @@
 #ifndef _FIBERIO_IOSTREAM_HPP_
 #define _FIBERIO_IOSTREAM_HPP_
 
+#include <fiberio/socket.hpp>
 #include <iostream>
+#include <memory>
 #include <boost/iostreams/concepts.hpp>
 #include <boost/iostreams/stream_buffer.hpp>
 #include <boost/iostreams/stream.hpp>
@@ -64,13 +66,6 @@ using socket_stream = boost::iostreams::stream<fiberio::detail::socket_device>;
  */
 using socket_streambuf =
     boost::iostreams::stream_buffer<fiberio::detail::socket_device>;
-
-//! Create a connected socket stream directly
-inline socket_stream connect_stream(const std::string& host, uint16_t port) {
-    socket socket;
-    socket.connect(host, port);
-    return socket_stream{ std::move(socket) };
-}
 
 }
 

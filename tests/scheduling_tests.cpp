@@ -155,7 +155,7 @@ TEST(scheduling, abort_sleeping) {
 TEST(scheduling, switch_back_and_forth_to_a_thread) {
     fiberio::use_on_this_thread();
 
-    const uint64_t num_iterations{ 10'000 };
+    const uint64_t num_iterations{ 1000 };
 
     int shared_int = 0;
     fibers::mutex mutex;
@@ -190,7 +190,7 @@ TEST(scheduling, switch_back_and_forth_to_a_thread) {
 TEST(scheduling, switch_between_multiple_threads) {
     fiberio::use_on_this_thread();
 
-    const uint64_t num_iterations{ 10'000 };
+    const uint64_t num_iterations{ 1000 };
 
     int shared_int = 0;
     fibers::mutex mutex;
